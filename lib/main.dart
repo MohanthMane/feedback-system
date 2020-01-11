@@ -13,6 +13,9 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: LoginPage(),
+      routes: <String,WidgetBuilder> {
+        '/landingpage': (BuildContext context) => new MyApp(),
+      },
     );
   }
 }
