@@ -13,7 +13,7 @@ class _HomePageState extends State<HomePage> {
         title: Text('Home'),
         centerTitle: true,
       ),
-      body: Text('Welcome'),
+      body: Center(child: Text('Welcome')),
     );
   }
 }
