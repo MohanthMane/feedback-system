@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../public/spinner.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../public/dialog.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {
@@ -11,47 +13,7 @@ class _LoginPageState extends State<LoginPage> {
   final formkey = new GlobalKey<FormState>();
   String _email = '';
   String _password = '';
-
-  _checkDatabase() async {
-    CollectionReference dbRef = Firestore.instance.collection('allusers');
-
-    dbRef.document(_email).get().then((DocumentSnapshot ds) {
-      if (ds.exists) {
-        // User can login
-        FirebaseAuth.instance
-            .signInWithEmailAndPassword(email: _email, password: _password)
-            .then((user) {
-          Navigator.of(context).pushReplacementNamed('/homepage');
-        }).catchError((e) {
-          print(e);
-        });
-      } else {
-        dialogPopup(title: "Login error", content: "User doesn't exist");
-      }
-    }).catchError((e) {
-      print(e);
-    });
-    return false;
-  }
-
-  dialogPopup({title, content}) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(title),
-          content: Text(content),
-          actions: <Widget>[
-            FlatButton(
-                child: Text("Close"),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                })
-          ],
-        );
-      },
-    );
-  }
+  bool loading = false;
 
   validateAndSave() {
     final form = formkey.currentState;
@@ -63,15 +25,35 @@ class _LoginPageState extends State<LoginPage> {
     return false;
   }
 
+  login() {
+    print('logging in');
+    setState(() => loading=true);
+    FirebaseAuth.instance.signInWithEmailAndPassword(
+      email: _email,
+      password: _password
+    ).then((user) {
+      Navigator.of(context).pushReplacementNamed('/homepage');
+    }).catchError((e) {
+      print(e);
+      setState(() => loading=false);
+      DialogPopUp dialog = new DialogPopUp(
+          title: 'Error',
+          content: "Couldn't sign in with above credentials",
+          context: context
+        );
+      dialog.dialogPopup();
+    });
+  }
+
   validateAndSubmit() async {
     if (validateAndSave()) {
-      _checkDatabase();
+      login();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return loading ? Spinner() : Scaffold(
       appBar: AppBar(
         title: Text('Login'),
         centerTitle: true,
