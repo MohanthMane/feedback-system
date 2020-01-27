@@ -9,7 +9,7 @@ class _ClosedFeedbacksState extends State<ClosedFeedbacks> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Text('Closed feedbacks'),
+      body: Center(child: Text('In closedFeedbacks'),),
     );
   }
 }
