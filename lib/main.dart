@@ -1,8 +1,7 @@
 import 'package:feedback_system/screens/closedFeedbacks.dart';
-import 'package:feedback_system/screens/createFeedback.dart';
-import 'package:feedback_system/screens/homepage.dart';
-import 'package:feedback_system/screens/loginpage.dart';
-import 'package:feedback_system/screens/test.dart';
+import 'Feedback creation/createFeedback.dart';
+import 'home/homepage.dart';
+import 'authentication/loginpage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -15,9 +14,7 @@ class MyApp extends StatelessWidget {
       home: LandingPage(),
       routes: <String,WidgetBuilder> {
         '/landingpage': (BuildContext context) => new MyApp(),
-        // '/signup': (BuildContext context) => new SignupPage(),
         '/homepage': (BuildContext context) => new HomePage(),
-        '/test': (BuildContext context) => new Testing(),
         '/createFeedback': (BuildContext context) => new CreateFeedback(),
         '/closedFeedback': (BuildContext context) => new ClosedFeedbacks()
       },
