@@ -1,6 +1,7 @@
-import 'package:feedback_system/public/dialog.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/widgets.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
 
 class Auth {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -8,25 +9,27 @@ class Auth {
 
   Auth(this.context);
 
-  Future<void> signIn(String _email,String _password) async {
-    FirebaseAuth.instance.signInWithEmailAndPassword(
-      email: _email,
-      password: _password
-    ).then((user) {
+  Future<void> signIn(String _email, String _password) async {
+    FirebaseAuth.instance
+        .signInWithEmailAndPassword(email: _email, password: _password)
+        .then((user) {
       Navigator.of(context).pushReplacementNamed('/homepage');
     }).catchError((e) {
       print(e);
-      DialogPopUp dialog = new DialogPopUp(
-          title: 'Error',
-          content: "Couldn't sign in with above credentials",
-          context: context
-        );
-      dialog.dialogPopup();
+      AwesomeDialog(
+        context: context,
+        dialogType: DialogType.ERROR,
+        tittle: 'Error',
+        desc: "Recheck your network connection or credentials",
+        animType: AnimType.BOTTOMSLIDE,
+      ).show();
     });
   }
 
-  Future<String> signUp(String email,String password) async {
-    FirebaseUser user = (await _firebaseAuth.createUserWithEmailAndPassword(email: email,password: password)).user;
+  Future<String> signUp(String email, String password) async {
+    FirebaseUser user = (await _firebaseAuth.createUserWithEmailAndPassword(
+            email: email, password: password))
+        .user;
     return user.uid;
   }
 
@@ -42,9 +45,15 @@ class Auth {
 
   Future<void> signOut() async {
     FirebaseAuth.instance.signOut().then((value) {
-      Navigator.of(context).pushReplacementNamed('/landingpage');
+      Navigator.of(context)
+          .pushNamedAndRemoveUntil('/landingpage', (v) => false);
     }).catchError((e) {
       print(e);
     });
+  }
+
+  getAdmins(String email) {
+    var docs = Firestore.instance.collection('/users').where('email',isEqualTo:email).where('isadmin',isEqualTo: true).getDocuments();
+    return docs;
   }
 }

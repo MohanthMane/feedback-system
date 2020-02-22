@@ -1,7 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:feedback_system/services/authManagement.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter/widgets.dart';
 
 class HamBurger {
   Auth auth;
@@ -16,22 +16,17 @@ class HamBurger {
             print("Email is null, so changing it");
             _email = await auth.getUserEmail();
           }
-          Firestore.instance
-              .collection('/adminusers')
-              .where('email', isEqualTo: _email)
-              .getDocuments()
-              .then((data) {
-            if (data.documents.length > 0 && _email!=null) {
-              Navigator.of(context).pop();
-              Navigator.of(context).pushNamed('/createFeedback');
+          auth.getAdmins(_email).then((doc) {
+            if(doc.documents.length > 0 && _email!=null) {
+              Navigator.of(context).pushReplacementNamed('/nameFeedback');
             } else {
               Fluttertoast.showToast(
-                  msg: "Permission denied!",
-                  toastLength: Toast.LENGTH_SHORT,
-                  timeInSecForIos: 1,
-                  textColor: Colors.white,
-                  backgroundColor: Colors.black,
-                  gravity: ToastGravity.BOTTOM);
+                msg: "Permission denied!",
+                toastLength: Toast.LENGTH_SHORT,
+                timeInSecForIos: 1,
+                textColor: Colors.white,
+                backgroundColor: Colors.black,
+                gravity: ToastGravity.BOTTOM);
             }
           });
         },
@@ -42,6 +37,12 @@ class HamBurger {
           Navigator.of(context).pop();
           Navigator.of(context).pushNamed('/closedFeedback');
         },
+      ),
+      ListTile(
+        title: Text('Logout'),
+        onTap: () {
+          auth.signOut();
+        }
       )
     ];
   }
