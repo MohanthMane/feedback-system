@@ -5,28 +5,27 @@ import 'package:flutter/widgets.dart';
 
 class HamBurger {
   Auth auth;
+  String _email;
 
-  List<Widget> menu(BuildContext context, String _email) {
+  List<Widget> menu(BuildContext context) {
     auth = new Auth(context);
     return <Widget>[
       ListTile(
         title: Text('Create feedback'),
         onTap: () async {
-          if(_email == null) {
-            print("Email is null, so changing it");
-            _email = await auth.getUserEmail();
-          }
+          _email = await auth.getUserEmail();
           auth.getAdmins(_email).then((doc) {
-            if(doc.documents.length > 0 && _email!=null) {
-              Navigator.of(context).pushReplacementNamed('/nameFeedback');
+            if (doc.documents.length > 0 && _email != null) {
+              Navigator.of(context).pop();
+              Navigator.of(context).pushNamed('/nameFeedback');
             } else {
               Fluttertoast.showToast(
-                msg: "Permission denied!",
-                toastLength: Toast.LENGTH_SHORT,
-                timeInSecForIos: 1,
-                textColor: Colors.white,
-                backgroundColor: Colors.black,
-                gravity: ToastGravity.BOTTOM);
+                  msg: "Permission denied!",
+                  toastLength: Toast.LENGTH_SHORT,
+                  timeInSecForIos: 1,
+                  textColor: Colors.white,
+                  backgroundColor: Colors.black,
+                  gravity: ToastGravity.BOTTOM);
             }
           });
         },
@@ -39,11 +38,10 @@ class HamBurger {
         },
       ),
       ListTile(
-        title: Text('Logout'),
-        onTap: () {
-          auth.signOut();
-        }
-      )
+          title: Text('Logout'),
+          onTap: () {
+            auth.signOut();
+          })
     ];
   }
 }

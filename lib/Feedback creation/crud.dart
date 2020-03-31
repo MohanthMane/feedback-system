@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:feedback_system/Feedback%20creation/GenerateScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +14,7 @@ class CrudMethods {
   // addData, getData, updateData
   postFeedback(context, feedback) {
     ProgressDialog pr = new ProgressDialog(context, isDismissible: false);
-    pr.style(message: 'Hosting', progressWidget: CircularProgressIndicator());
+    pr.style(message: 'Generating QR Code', progressWidget: CircularProgressIndicator());
     pr.show();
     Firestore.instance.collection('feedbacks').add({
       'name': feedback.name,
@@ -26,18 +27,13 @@ class CrudMethods {
       'status': feedback.status,
     }).then((doc) {
       pr.hide();
-      AwesomeDialog(
-          context: context,
-          dialogType: DialogType.SUCCES,
-          animType: AnimType.BOTTOMSLIDE,
-          tittle: 'Success',
-          desc: 'Feedback is now open',
-          dismissOnTouchOutside: false,
-          btnOkOnPress: () {
-            Navigator.of(context, rootNavigator: false).pop();
-            Navigator.of(context)
-                .pushNamedAndRemoveUntil('/homepage', (r) => false);
-          }).show();
+      print(doc.documentID);
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => GenerateScreen(docID: doc.documentID)
+        )
+      );
     }).catchError((e) {
       AwesomeDialog(
           context: context,

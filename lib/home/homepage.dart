@@ -9,22 +9,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  String _email;
   HamBurger hamBurger = new HamBurger();
   Auth auth;
   Stream<QuerySnapshot> feedbacks;
 
-  setEmail() async {
-    print("setting email");
-    _email = await auth.getUserEmail();
-    print("Email set $_email");
-  }
-
   @override
   void initState() {
     super.initState();
-    auth = new Auth(context);
-    setEmail();
   }
 
   @override
@@ -35,7 +26,7 @@ class _HomePageState extends State<HomePage> {
         centerTitle: true,
       ),
       drawer: Drawer(
-        child: ListView(children: hamBurger.menu(context,_email)),
+        child: ListView(children: hamBurger.menu(context)),
       ),
       body: Center(child: Text('Welcome')),
     );

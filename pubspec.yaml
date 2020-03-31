@@ -18,8 +18,13 @@ dependencies:
   awesome_dialog:
   grouped_buttons: ^1.0.3
   progress_dialog: ^1.2.1
-
-  
+  qr_flutter: ^3.1.0
+  path_provider: 0.4.1
+  image_gallery_saver: ^1.2.2
+  permission_handler:
+  flutter_share_file:
+  image_picker_saver:
+  share_extend: ^1.1.2
 
 dev_dependencies:
   flutter_test:

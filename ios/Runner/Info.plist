@@ -41,5 +41,9 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This permission is required to save the QR Code into your device.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>This permission is required to share the QR Code</string>
 </dict>
 </plist>
