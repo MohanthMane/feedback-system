@@ -1,12 +1,12 @@
 import 'package:feedback_system/Feedback%20creation/crud.dart';
 import 'package:feedback_system/models/feedback_model.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CreateFeedback extends StatefulWidget {
-  final String name, host;
-  final List<bool> sections;
+  final String name, host, type;
 
-  CreateFeedback({this.name, this.host, this.sections});
+  CreateFeedback({this.name, this.host, this.type});
 
   @override
   _CreateFeedbackState createState() => _CreateFeedbackState();
@@ -108,9 +108,11 @@ class _CreateFeedbackState extends State<CreateFeedback> {
           child: RaisedButton(
             color: Colors.blue,
             child: Text('Post'),
-            onPressed: () {
+            onPressed: () async {
+              SharedPreferences _prefs = await SharedPreferences.getInstance();
+              String email = _prefs.getString("email");
               FeedbackModel feedback = new FeedbackModel(
-                  questions, widget.sections, widget.name, widget.host);
+                  questions, widget.type, widget.name, widget.host,email);
               CrudMethods().postFeedback(context, feedback);
             },
           ),

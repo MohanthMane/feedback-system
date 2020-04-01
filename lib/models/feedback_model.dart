@@ -3,19 +3,21 @@ class FeedbackModel {
   List<int> scores;
   List<String> remarks;
   List<String> attended;
-  List<bool> sections;
+  String type;
   String name, host;
   String status;
+  String host_id;
 
-  FeedbackModel(questions,sections,name,host) {
+  FeedbackModel(questions,type,name,host,host_id) {
     this.questions = questions;
     scores = new List<int>.filled(questions.length, 0, growable: false);
     remarks = new List<String>();
     attended = new List<String>();
     status = "open";
-    this.sections = sections;
+    this.type = type;
     this.name = name;
     this.host = host;
+    this.host_id = host_id;
   }
 
   bool addQuestion(String question) {

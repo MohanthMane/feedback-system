@@ -19,12 +19,13 @@ class CrudMethods {
     Firestore.instance.collection('feedbacks').add({
       'name': feedback.name,
       'host': feedback.host,
-      'sections': feedback.sections,
+      'host_id': feedback.host_id,
+      'type': feedback.type,
       'questions': feedback.questions,
       'scores': feedback.scores,
       'remarks': feedback.remarks,
       'attended': feedback.attended,
-      'status': feedback.status,
+      'status': feedback.status
     }).then((doc) {
       pr.hide();
       print(doc.documentID);

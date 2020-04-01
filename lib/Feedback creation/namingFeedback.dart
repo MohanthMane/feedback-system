@@ -10,13 +10,14 @@ class NamingFeedback extends StatefulWidget {
 class _NamingFeedbackState extends State<NamingFeedback> {
   final formKey = new GlobalKey<FormState>();
   String name;
-  List<bool> sections;
+  String type;
   String host;
+  List<String> types = ['Workshop', 'Training', 'Seminar', 'Faculty'];
 
   validateAndSave() {
     final form = formKey.currentState;
 
-    if(form.validate() && sections.contains(true)) {
+    if (form.validate() && type != null) {
       form.save();
       return true;
     }
@@ -24,10 +25,13 @@ class _NamingFeedbackState extends State<NamingFeedback> {
   }
 
   validateAndSubmit() async {
-    if(validateAndSave()) {
-      Navigator.push(context, MaterialPageRoute(
-        builder: (context) => CreateFeedback(host: host,name: name,sections: sections),
-      ));
+    if (validateAndSave()) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                CreateFeedback(host: host, name: name, type: type),
+          ));
     }
   }
 
@@ -36,7 +40,6 @@ class _NamingFeedbackState extends State<NamingFeedback> {
     super.initState();
     name = '';
     host = '';
-    sections = new List<bool>.filled(4, false);
   }
 
   @override
@@ -72,21 +75,22 @@ class _NamingFeedbackState extends State<NamingFeedback> {
       ),
       SizedBox(height: 25),
       Text(
-        'Select sections that can take the feedback',
-        style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16),
+        'What is the feedback for?',
+        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
       ),
       SizedBox(height: 15),
-      CheckboxGroup(
-        labels: <String>["CSE-1", "CSE-2", "CSE-3", "CSE-4"],
-        onSelected: (checked) {
-          for(int i=0;i<4;i++) {
-            sections[i] = (checked.contains("CSE-"+(i+1).toString()));
-          }
+      RadioButtonGroup(
+        labels: ["Workshop", "Training", "Seminar", "Faculty"],
+        onSelected: (value) {
+          type = value;
         },
       ),
       SizedBox(height: 15),
       RaisedButton(
-        child: Text('Next',style: TextStyle(color: Colors.white),),
+        child: Text(
+          'Next',
+          style: TextStyle(color: Colors.white),
+        ),
         color: Colors.blue,
         onPressed: validateAndSubmit,
       )
