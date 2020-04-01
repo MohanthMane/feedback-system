@@ -1,4 +1,3 @@
-import 'package:feedback_system/Feedback%20creation/GenerateScreen.dart';
 import 'package:feedback_system/Feedback%20creation/namingFeedback.dart';
 import 'package:feedback_system/screens/closedFeedbacks.dart';
 import 'package:flutter/services.dart';
@@ -19,7 +18,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: LandingPage(),
-      routes: <String, WidgetBuilder> {
+      routes: <String, WidgetBuilder>{
         '/nameFeedback': (BuildContext context) => new NamingFeedback(),
         '/landingpage': (BuildContext context) => new MyApp(),
         '/homepage': (BuildContext context) => new HomePage(),

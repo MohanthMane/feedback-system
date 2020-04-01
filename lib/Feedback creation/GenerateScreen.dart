@@ -26,7 +26,6 @@ class GenerateScreenState extends State<GenerateScreen> {
   String _dataString;
   bool _status;
   var filePath;
-  String BASE64_IMAGE;
 
   requestPermissions() {
     if (Platform.isAndroid) {

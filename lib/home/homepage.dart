@@ -10,12 +10,14 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   HamBurger hamBurger = new HamBurger();
+  int section;
   Auth auth;
   Stream<QuerySnapshot> feedbacks;
 
   @override
   void initState() {
     super.initState();
+    auth = new Auth(context);
   }
 
   @override
@@ -28,7 +30,7 @@ class _HomePageState extends State<HomePage> {
       drawer: Drawer(
         child: ListView(children: hamBurger.menu(context)),
       ),
-      body: Center(child: Text('Welcome')),
+      body: Text('Hello')
     );
   }
 }

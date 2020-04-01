@@ -14,6 +14,12 @@ class ListElement extends StatelessWidget {
         style: TextStyle(fontSize: 20),
       ),
       title: Text(question),
+      onTap: () {
+
+      },
+      onLongPress: () {
+        
+      },
     );
   }
 }

@@ -25,6 +25,7 @@ dependencies:
   flutter_share_file:
   image_picker_saver:
   share_extend: ^1.1.2
+  shared_preferences: ^0.5.6+3
 
 dev_dependencies:
   flutter_test:
