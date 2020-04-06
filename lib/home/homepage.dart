@@ -1,5 +1,8 @@
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:feedback_system/QRCode/scanner.dart';
 import 'package:feedback_system/services/authManagement.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'hamburger.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -17,14 +20,42 @@ class _HomePageState extends State<HomePage> {
   Auth auth;
   bool isAdmin;
   String email;
+  String qrText;
+  bool _statusStorage, _statusCamera;
   Stream<QuerySnapshot> feedbacks;
   SharedPreferences _prefs;
+
+  requestStoragePermissions() {
+    if (Platform.isAndroid) {
+      Permission.storage.isGranted.then((status) {
+        setState(() {
+          _statusStorage = status;
+        });
+      });
+      Permission.storage.isUndetermined.then((status) {
+        Permission.storage.request();
+      });
+    } else if (Platform.isIOS) {
+      Permission.photos.isGranted.then((status) {
+        setState(() {
+          _statusStorage = status;
+        });
+      });
+      Permission.photos.isUndetermined.then((status) {
+        Permission.storage.request();
+      });
+    }
+  }
 
   instantiate() async {
     _prefs = await SharedPreferences.getInstance();
     if (_prefs.getBool("admin")) {
       setState(() {
         isAdmin = true;
+      });
+    } else {
+      setState(() {
+        isAdmin = false;
       });
     }
     email = _prefs.getString("email");
@@ -35,6 +66,17 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     auth = new Auth(context);
     instantiate();
+    requestStoragePermissions();
+  }
+
+  @override
+  void deactivate() {
+    super.deactivate();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -51,24 +93,32 @@ class _HomePageState extends State<HomePage> {
           ? loading()
           : (isAdmin) ? adminContent() : userContent(),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // TODO: Implement QR Scanner
-        },
-        tooltip: 'QR Scanner',
-        child: Icon(Icons.camera),
-      ), //
+          heroTag: 'Scan',
+          child: Icon(Icons.camera),
+          onPressed: () {
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => Scanner()));
+          },
+          tooltip: 'QR Scanner'),
     );
   }
 
   loading() {
-    return Center(child: SpinKitWave(color: Colors.blue,));
+    return Center(
+        child: SpinKitWave(
+      color: Colors.blue,
+    ));
   }
 
   adminContent() {
     return StreamBuilder(
-      stream: Firestore.instance.collection('/feedbacks').where('host_id',isEqualTo: email).where('status',isEqualTo: "open").snapshots(),
+      stream: Firestore.instance
+          .collection('/feedbacks')
+          .where('host_id', isEqualTo: email)
+          .where('status', isEqualTo: "open")
+          .snapshots(),
       builder: (context, snapshot) {
-        if(snapshot.hasData) {
+        if (snapshot.hasData) {
           return ListView.separated(
             separatorBuilder: (context, index) =>
                 Divider(height: 1.0, color: Colors.grey),
@@ -79,13 +129,19 @@ class _HomePageState extends State<HomePage> {
               return ListTile(
                 title: Text(feedback.data['name']),
                 subtitle: Text('Host : ' + feedback.data['host']),
+                trailing: Text(feedback.data['type'] ?? ""),
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => EditFeedback(feedback: feedback)));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              EditFeedback(feedback: feedback)));
                 },
               );
             },
           );
-        } else if(snapshot.connectionState == ConnectionState.done && !snapshot.hasData) {
+        } else if (snapshot.connectionState == ConnectionState.done &&
+            !snapshot.hasData) {
           return Center(child: Text('No active feedbacks'));
         } else {
           return loading();

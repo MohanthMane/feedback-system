@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:feedback_system/Feedback%20creation/GenerateScreen.dart';
+import 'package:feedback_system/QRCode/GenerateScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +19,7 @@ class CrudMethods {
     Firestore.instance.collection('feedbacks').add({
       'name': feedback.name,
       'host': feedback.host,
-      'host_id': feedback.host_id,
+      'host_id': feedback.hostId,
       'type': feedback.type,
       'questions': feedback.questions,
       'scores': feedback.scores,

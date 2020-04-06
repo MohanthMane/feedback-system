@@ -32,9 +32,21 @@ class HamBurger {
       ),
       ListTile(
         title: Text('Open feedbacks'),
-        onTap: () {
-          Navigator.of(context).pop();
-          Navigator.of(context).pushNamed('/closedFeedback');
+        onTap: () async {
+          _prefs = await SharedPreferences.getInstance();
+          bool isAdmin = _prefs.getBool("admin");
+          if (isAdmin) {
+            Navigator.of(context).pop();
+            Navigator.of(context).pushNamed('/closedFeedback');
+          } else {
+            Fluttertoast.showToast(
+                msg: "Permission denied!",
+                toastLength: Toast.LENGTH_SHORT,
+                timeInSecForIos: 1,
+                textColor: Colors.white,
+                backgroundColor: Colors.black,
+                gravity: ToastGravity.BOTTOM);
+          }
         },
       ),
       ListTile(

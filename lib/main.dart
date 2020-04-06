@@ -1,9 +1,8 @@
 import 'package:feedback_system/Feedback%20creation/namingFeedback.dart';
-import 'package:feedback_system/screens/closedFeedbacks.dart';
+import 'package:feedback_system/Previous%20feedbacks/closedFeedbacks.dart';
 import 'package:flutter/services.dart';
 import 'Feedback creation/createFeedback.dart';
 import 'home/homepage.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'authentication/loginpage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

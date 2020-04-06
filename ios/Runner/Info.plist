@@ -45,5 +45,9 @@
 	<string>This permission is required to save the QR Code into your device.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>This permission is required to share the QR Code</string>
+	<key>NSCameraUsageDescription</key>
+	<string>This permission is required to scan QR code</string>
+	<key>io.flutter.embedded_views_preview</key>
+	<string>YES</string>
 </dict>
 </plist>
