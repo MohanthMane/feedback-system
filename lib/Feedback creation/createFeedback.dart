@@ -3,6 +3,113 @@ import 'package:feedback_system/models/feedback_model.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+enum MetricType { Satisfaction, GoalCompletionRate, EffortScore, SmileyRating }
+
+class Question {
+  String questionData = "";
+  MetricType metricType = MetricType.GoalCompletionRate;
+}
+
+class QuestionDialog extends StatefulWidget {
+  String questionAction;
+  Question question;
+
+  QuestionDialog(this.questionAction, this.question);
+
+  @override
+  _QuestionDialogState createState() => _QuestionDialogState();
+}
+
+class _QuestionDialogState extends State<QuestionDialog> {
+  MetricType _metricType = MetricType.GoalCompletionRate;
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.questionAction),
+      ),
+      body: Container(
+        color: Colors.white,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              TextFormField(
+                initialValue: widget.question.questionData,
+                decoration: InputDecoration(hintText: 'Question'),
+                onChanged: (text) {
+                  widget.question.questionData = text;
+                },
+              ),
+              Radio(
+                value: MetricType.EffortScore,
+                groupValue: _metricType,
+                onChanged: (MetricType value) {
+                  setState(() {
+                    print(value);
+                    _metricType = value;
+                  });
+                },
+              ),
+              Image.asset("assets/effort.png"),
+              Radio(
+                value: MetricType.SmileyRating,
+                groupValue: _metricType,
+                onChanged: (MetricType value) {
+                  setState(() {
+                    print(value);
+                    _metricType = value;
+                  });
+                },
+              ),
+              Image.asset("assets/smiley.png"),
+              Radio(
+                value: MetricType.GoalCompletionRate,
+                groupValue: _metricType,
+                onChanged: (MetricType value) {
+                  print(value);
+                  setState(() {
+                    _metricType = value;
+                  });
+                },
+              ),
+              Image.asset("assets/goalcompletion.png"),
+              Radio(
+                value: MetricType.Satisfaction,
+                groupValue: _metricType,
+                onChanged: (MetricType value) {
+                  print(value);
+                  setState(() {
+                    _metricType = value;
+                  });
+                },
+              ),
+              Image.asset("assets/satisfaction.png"),
+              Container(
+                height: 50,
+              ),
+              FlatButton(
+                color: Colors.blue,
+                child: Text(
+                  'ADD',
+                  style: TextStyle(color: Colors.white),
+                ),
+                onPressed: () async {
+                  if (widget.question.questionData.length != 0) {
+                    widget.question.metricType = _metricType;
+                    //print(widget.question);
+                    Navigator.pop(context, widget.question);
+                  }
+                },
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class CreateFeedback extends StatefulWidget {
   final String name, host, type;
 
@@ -13,44 +120,9 @@ class CreateFeedback extends StatefulWidget {
 }
 
 class _CreateFeedbackState extends State<CreateFeedback> {
-  List<String> questions = new List<String>();
+  List<Question> questionsList = List<Question>();
   final String content = "Can't add empty question";
   final String title = "Error";
-  String question = "";
-
-  _questionDialog(BuildContext context, String previousText,int index,String title) async {
-    question = previousText;
-    return showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text(title),
-            content: TextField(
-              decoration: InputDecoration(hintText: 'Question'),
-              onChanged: (text) {
-                question = text;
-              },
-            ),
-            actions: <Widget>[
-              FlatButton(
-                child: Text('ADD'),
-                onPressed: () {
-                  print(question.length);
-                  if (question.length != 0) {
-                    setState(() {
-                      if(previousText != "")
-                        questions.removeAt(index);
-                      questions.insert(index,question);
-                      question = "";
-                    });
-                  }
-                  Navigator.of(context).pop();
-                },
-              )
-            ],
-          );
-        });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,9 +131,20 @@ class _CreateFeedbackState extends State<CreateFeedback> {
       appBar: AppBar(
         actions: <Widget>[
           FlatButton(
-            child: Icon(Icons.add,color: Colors.white,),
-            onPressed: () {
-              _questionDialog(context, "",questions.length,'Question');
+            child: Icon(
+              Icons.add,
+              color: Colors.white,
+            ),
+            onPressed: () async {
+              dynamic questionReference = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        QuestionDialog("Create Question", Question()),
+                  ));
+              if (questionReference != null) {
+                questionsList.add(questionReference);
+              }
             },
           )
         ],
@@ -69,23 +152,27 @@ class _CreateFeedbackState extends State<CreateFeedback> {
       body: ListView.separated(
         separatorBuilder: (context, index) =>
             Divider(height: 1.0, color: Colors.grey),
-        itemCount: questions.length,
+        itemCount: questionsList.length,
         itemBuilder: (context, index) {
           return Dismissible(
-              key: Key(questions[index]),
+              key: Key(questionsList[index].questionData),
               onDismissed: (direction) {
                 setState(() {
-                  questions.removeAt(index);
+                  questionsList.removeAt(index);
                 });
                 Scaffold.of(context).showSnackBar((SnackBar(
                   content: Text('Question deleted'),
                 )));
               },
               background: Container(
-                color: Colors.red, 
+                color: Colors.red,
                 child: Center(
-                  child: Text('Delete',
-                    style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.bold),
+                  child: Text(
+                    'Delete',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
@@ -94,10 +181,16 @@ class _CreateFeedbackState extends State<CreateFeedback> {
                   (index + 1).toString() + ")",
                   style: TextStyle(fontSize: 15),
                 ),
-                title: Text(questions[index]),
+                title: Text(questionsList[index].questionData),
+                trailing: Text(questionsList[index].metricType.toString()),
                 onTap: () {
                   print('Here on Tap');
-                  _questionDialog(context, questions[index],index,'Edit Question');
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => QuestionDialog(
+                            "Edit Question", questionsList[index])),
+                  );
                 },
               ));
         },
@@ -112,7 +205,12 @@ class _CreateFeedbackState extends State<CreateFeedback> {
               SharedPreferences _prefs = await SharedPreferences.getInstance();
               String email = _prefs.getString("email");
               FeedbackModel feedback = new FeedbackModel(
-                  questions, widget.type, widget.name, widget.host,email);
+                  //Modify Here
+                  questionsList,
+                  widget.type,
+                  widget.name,
+                  widget.host,
+                  email);
               CrudMethods().postFeedback(context, feedback);
             },
           ),
