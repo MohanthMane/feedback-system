@@ -33,6 +33,7 @@ class _ScannerState extends State<Scanner> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(title: Text('QR Scanner')),
       body: Column(
         children: <Widget>[
           Expanded(

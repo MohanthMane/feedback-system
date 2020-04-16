@@ -22,6 +22,7 @@ class CrudMethods {
       'host_id': feedback.hostId,
       'type': feedback.type,
       'questions': feedback.questions,
+      'metrics': feedback.metrics,
       'scores': feedback.scores,
       'remarks': feedback.remarks,
       'attended': feedback.attended,
@@ -36,6 +37,7 @@ class CrudMethods {
         )
       );
     }).catchError((e) {
+      print(e);
       AwesomeDialog(
           context: context,
           dialogType: DialogType.ERROR,

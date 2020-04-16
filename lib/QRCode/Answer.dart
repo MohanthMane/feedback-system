@@ -22,7 +22,7 @@ class _AnswerState extends State<Answer> {
   List<dynamic> updated;
 
   instantiate() async {
-    Firestore.instance
+    await Firestore.instance
         .collection('/feedbacks')
         .document(widget.data)
         .get()
@@ -36,7 +36,7 @@ class _AnswerState extends State<Answer> {
   }
 
   getSharedPreferences() async {
-    SharedPreferences.getInstance().then((val) {
+    await SharedPreferences.getInstance().then((val) {
       setState(() {
         email = val.getString("email");
       });
@@ -93,23 +93,7 @@ class _AnswerState extends State<Answer> {
                 SizedBox(
                   height: 5,
                 ),
-                SliderTheme(
-                  data: themeData(),
-                  child: Slider(
-                    value: scores[index],
-                    min: 1,
-                    max: 10,
-                    divisions: 9,
-                    label: scores[index].toString(),
-                    onChanged: (_value) {
-                      setState(
-                        () {
-                          scores[index] = _value;
-                        },
-                      );
-                    },
-                  ),
-                ),
+                metric(index)
               ],
             ),
           );
@@ -131,6 +115,53 @@ class _AnswerState extends State<Answer> {
     );
   }
 
+  metric(int index) {
+    switch (data['metrics'][index]) {
+      case 'Satisfaction':
+        return slider(index);
+      case 'SmileyRating':
+        return smiley(index);
+      case 'EffortScore':
+        return effortScore(index);
+      case 'GoalCompletionRate':
+        return goalCompletionRate(index);
+      default:
+        return Text('Unexpected error');
+    }
+  }
+
+  goalCompletionRate(int index) {
+    return Text('Goal completion rate');
+  }
+
+  effortScore(int index) {
+    return Text('Effort Score');
+  }
+
+  smiley(int index) {
+    return Text('Smiley');
+  }
+
+  slider(int index) {
+    return SliderTheme(
+      data: themeData(),
+      child: Slider(
+        value: scores[index],
+        min: 1,
+        max: 10,
+        divisions: 9,
+        label: scores[index].toString(),
+        onChanged: (_value) {
+          setState(
+            () {
+              scores[index] = _value;
+            },
+          );
+        },
+      ),
+    );
+  }
+
   updateScores() async {
     await Firestore.instance
         .collection('/feedbacks')
@@ -139,7 +170,7 @@ class _AnswerState extends State<Answer> {
         .then((doc) {
       print(doc['scores']);
       var prev = List();
-      for (int x = 0;x < doc['scores'].length;x++) prev.add(doc['scores'][x]);
+      for (int x = 0; x < doc['scores'].length; x++) prev.add(doc['scores'][x]);
       int idx = 0;
       while (idx < scores.length) {
         prev[idx] += scores[idx];

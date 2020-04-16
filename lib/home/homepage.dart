@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:feedback_system/QRCode/scanner.dart';
 import 'package:feedback_system/services/authManagement.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'hamburger.dart';
@@ -21,7 +22,7 @@ class _HomePageState extends State<HomePage> {
   bool isAdmin;
   String email;
   String qrText;
-  bool _statusStorage, _statusCamera;
+  bool _statusStorage;
   Stream<QuerySnapshot> feedbacks;
   SharedPreferences _prefs;
 
@@ -31,6 +32,10 @@ class _HomePageState extends State<HomePage> {
         setState(() {
           _statusStorage = status;
         });
+      });
+      Permission.storage.isPermanentlyDenied.then((status) {
+        Fluttertoast.showToast(
+            msg: 'Please grant storage permissions in the setting');
       });
       Permission.storage.isUndetermined.then((status) {
         Permission.storage.request();
@@ -48,25 +53,27 @@ class _HomePageState extends State<HomePage> {
   }
 
   instantiate() async {
-    _prefs = await SharedPreferences.getInstance();
-    if (_prefs.getBool("admin")) {
+    await SharedPreferences.getInstance().then((prefs) {
       setState(() {
-        isAdmin = true;
+        isAdmin = prefs.getBool('admin');
+        email = prefs.getString('email');
       });
-    } else {
-      setState(() {
-        isAdmin = false;
-      });
-    }
-    email = _prefs.getString("email");
+    });
+    print("_prefs set");
   }
 
   @override
   void initState() {
     super.initState();
     auth = new Auth(context);
-    instantiate();
-    requestStoragePermissions();
+    SharedPreferences.getInstance().then((prefs) {
+      setState(() {
+        isAdmin = prefs.getBool('admin');
+        email = prefs.getString('email');
+      });
+      print("_prefs set");
+    });
+    // requestStoragePermissions();
   }
 
   @override
@@ -89,7 +96,7 @@ class _HomePageState extends State<HomePage> {
       drawer: Drawer(
         child: ListView(children: hamBurger.menu(context)),
       ),
-      body: isAdmin == null
+      body: (isAdmin == null)
           ? loading()
           : (isAdmin) ? adminContent() : userContent(),
       floatingActionButton: FloatingActionButton(

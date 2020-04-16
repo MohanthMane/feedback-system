@@ -3,7 +3,12 @@ import 'package:feedback_system/models/feedback_model.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-enum MetricType { Satisfaction, GoalCompletionRate, EffortScore, SmileyRating }
+enum MetricType { 
+  Satisfaction, 
+  GoalCompletionRate, 
+  EffortScore, 
+  SmileyRating 
+}
 
 class Question {
   String questionData = "";
@@ -11,8 +16,8 @@ class Question {
 }
 
 class QuestionDialog extends StatefulWidget {
-  String questionAction;
-  Question question;
+  final String questionAction;
+  final Question question;
 
   QuestionDialog(this.questionAction, this.question);
 
@@ -21,6 +26,7 @@ class QuestionDialog extends StatefulWidget {
 }
 
 class _QuestionDialogState extends State<QuestionDialog> {
+  // MetricType _metricType = widget.question.metricType;
   MetricType _metricType = MetricType.GoalCompletionRate;
   @override
   Widget build(BuildContext context) {
@@ -29,6 +35,7 @@ class _QuestionDialogState extends State<QuestionDialog> {
         title: Text(widget.questionAction),
       ),
       body: Container(
+        margin: EdgeInsets.all(15),
         color: Colors.white,
         child: SingleChildScrollView(
           child: Column(
@@ -129,6 +136,7 @@ class _CreateFeedbackState extends State<CreateFeedback> {
     double width = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
+        title: Text('Create feedback'),
         actions: <Widget>[
           FlatButton(
             child: Icon(

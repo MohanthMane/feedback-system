@@ -67,8 +67,9 @@ class Auth {
 
   getAdmins(String email) {
     var docs = Firestore.instance
-        .collection('/admins')
+        .collection('/users')
         .where('email', isEqualTo: email)
+        .where('isadmin', isEqualTo: true)
         .getDocuments();
     return docs;
   }
