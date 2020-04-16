@@ -1,7 +1,10 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:progress_dialog/progress_dialog.dart';
+import 'package:feedback_system/custom_icons_icons.dart';
 
 class EditFeedback extends StatefulWidget {
   final DocumentSnapshot feedback;
@@ -44,18 +47,49 @@ class _EditFeedbackState extends State<EditFeedback> {
           ),
         )
       ],
-      floatingActionButton: FloatingActionButton(
-        elevation: 0,
-        tooltip: 'End feedback',
-        backgroundColor: Colors.white24,
-        child: Icon(
-          Icons.cancel,
-          size: 50,
-          color: Colors.blue,
-        ),
-        onPressed: endFeedback,
-      ),
+
+      floatingActionButton: getActions()
     );
+  }
+
+  getActions() {
+    return SpeedDial(
+          // both default to 16
+          marginRight: 18,
+          marginBottom: 20,
+          animatedIcon: AnimatedIcons.menu_close,
+          animatedIconTheme: IconThemeData(size: 22.0),
+          closeManually: false,
+          curve: Curves.bounceIn,
+          overlayColor: Colors.white,
+          overlayOpacity: 0.5,
+          onOpen: () => print('OPENING DIAL'),
+          onClose: () => print('DIAL CLOSED'),
+          tooltip: 'Options',
+          heroTag: 'speed-dial-hero-tag',
+          backgroundColor: Colors.blue,
+          foregroundColor: Colors.white,
+          elevation: 8.0,
+          shape: CircleBorder(),
+          children: [
+            SpeedDialChild(
+              child: Icon(Icons.delete),
+              backgroundColor: Colors.red,
+              label: 'End feedback',
+              labelBackgroundColor: Colors.black,
+              labelStyle: TextStyle(fontSize: 18.0,color: Colors.white),
+              onTap: () => endFeedback()
+            ),
+            SpeedDialChild(
+              child: Icon(MdiIcons.qrcode),
+              backgroundColor: Colors.blue,
+              label: 'Generate QR',
+              labelBackgroundColor: Colors.black,
+              labelStyle: TextStyle(fontSize: 18.0,color: Colors.white),
+              onTap: () => print('SECOND CHILD'),
+            )
+          ],
+        );
   }
 
   endFeedback() async {

@@ -71,6 +71,8 @@ class Auth {
 
   Future<void> signOut() async {
     await FirebaseAuth.instance.signOut().then((value) {
+      _prefs.setString('email', null);
+      _prefs.setBool('isadmin', null);
       Navigator.of(context).pop();
       Navigator.of(context)
           .pushNamedAndRemoveUntil('/landingpage', (v) => false);

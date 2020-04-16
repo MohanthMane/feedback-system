@@ -33,10 +33,6 @@ class _HomePageState extends State<HomePage> {
           _statusStorage = status;
         });
       });
-      Permission.storage.isPermanentlyDenied.then((status) {
-        Fluttertoast.showToast(
-            msg: 'Please grant storage permissions in the setting');
-      });
       Permission.storage.isUndetermined.then((status) {
         Permission.storage.request();
       });
@@ -52,16 +48,6 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  instantiate() async {
-    await SharedPreferences.getInstance().then((prefs) {
-      setState(() {
-        isAdmin = prefs.getBool('admin');
-        email = prefs.getString('email');
-      });
-    });
-    print("_prefs set");
-  }
-
   @override
   void initState() {
     super.initState();
@@ -72,8 +58,8 @@ class _HomePageState extends State<HomePage> {
         email = prefs.getString('email');
       });
       print("_prefs set");
+      requestStoragePermissions();
     });
-    // requestStoragePermissions();
   }
 
   @override
