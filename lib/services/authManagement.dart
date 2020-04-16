@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Auth {
@@ -19,7 +21,7 @@ class Auth {
   }
 
   Future<void> signIn(String _email, String _password) async {
-    FirebaseAuth.instance
+    await FirebaseAuth.instance
         .signInWithEmailAndPassword(email: _email, password: _password)
         .then((user) {
           getAdmins(_email).then((docs) {
@@ -44,9 +46,21 @@ class Auth {
   }
 
   Future<String> signUp(String email, String password) async {
+    ProgressDialog pr = new ProgressDialog(context);
+    pr.style(message: 'Creating account', progressWidget: CircularProgressIndicator());
     FirebaseUser user = (await _firebaseAuth.createUserWithEmailAndPassword(
             email: email, password: password))
         .user;
+    await Firestore.instance.collection('/users').add({
+      'email': email,
+      'isadmin': false
+    }).then((val) {
+      pr.hide();
+      _prefs.setString('email', email);
+      _prefs.setBool('isadmin', false);
+      Navigator.of(context).pop();
+      Navigator.of(context).pushReplacementNamed('/homepage');
+    });
     return user.uid;
   }
 
@@ -56,7 +70,7 @@ class Auth {
   }
 
   Future<void> signOut() async {
-    FirebaseAuth.instance.signOut().then((value) {
+    await FirebaseAuth.instance.signOut().then((value) {
       Navigator.of(context).pop();
       Navigator.of(context)
           .pushNamedAndRemoveUntil('/landingpage', (v) => false);

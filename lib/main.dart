@@ -1,5 +1,6 @@
 import 'package:feedback_system/Feedback%20creation/namingFeedback.dart';
 import 'package:feedback_system/Previous%20feedbacks/closedFeedbacks.dart';
+import 'package:feedback_system/authentication/signup.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -20,6 +21,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       home: LandingPage(),
       routes: <String, WidgetBuilder>{
+        '/signup': (BuildContext context) => new SignUp(),
         '/nameFeedback': (BuildContext context) => new NamingFeedback(),
         '/landingpage': (BuildContext context) => new MyApp(),
         '/homepage': (BuildContext context) => new HomePage(),

@@ -11,6 +11,7 @@ class _LoginPageState extends State<LoginPage> {
   String _email = '';
   String _password = '';
   Auth auth;
+  bool isHidden = true;
 
   @override
   void initState() {
@@ -56,6 +57,7 @@ class _LoginPageState extends State<LoginPage> {
 
   // Entire Form in returned by this function
   List<Widget> loginForm() {
+    double width = MediaQuery.of(context).size.width - 50;
     return <Widget>[
       TextFormField(
         keyboardType: TextInputType.emailAddress,
@@ -67,8 +69,19 @@ class _LoginPageState extends State<LoginPage> {
       ),
       SizedBox(height: 15),
       TextFormField(
-        decoration: InputDecoration(labelText: 'Password'),
-        obscureText: true,
+        decoration: InputDecoration(
+          labelText: 'Password',
+          suffixIcon: IconButton(
+                          icon: Icon(
+                isHidden ? Icons.visibility : Icons.visibility_off),
+                onPressed: () {
+                  setState(() {
+                    isHidden = !isHidden;
+                  });
+                },
+            )
+        ),
+        obscureText: isHidden,
         validator: (value) {
           if (value.isEmpty)
             return "Password is required";
@@ -80,13 +93,34 @@ class _LoginPageState extends State<LoginPage> {
         onSaved: (value) => _password = value,
       ),
       SizedBox(height: 15),
-      RaisedButton(
-        child: Text(
-          'Login',
-          style: TextStyle(color: Colors.white),
-        ),
-        color: Colors.blue,
-        onPressed: validateAndSubmit,
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: <Widget>[
+          SizedBox(
+            width: width/2,
+                      child: RaisedButton(
+              child: Text(
+                'Login',
+                style: TextStyle(color: Colors.white),
+              ),
+              color: Colors.blue,
+              onPressed: validateAndSubmit,
+            ),
+          ),
+          SizedBox(
+            width: width/2,
+                      child: RaisedButton(
+              child: Text(
+                'Register',
+                style: TextStyle(color: Colors.white),
+              ),
+              color: Colors.blue,
+              onPressed: () {
+                Navigator.pushNamed(context, '/signup');
+              },
+            ),
+          ),
+        ],
       )
     ];
   }

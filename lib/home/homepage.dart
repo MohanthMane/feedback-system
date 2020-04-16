@@ -118,6 +118,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   adminContent() {
+    print(email);
     return StreamBuilder(
       stream: Firestore.instance
           .collection('/feedbacks')
@@ -159,7 +160,7 @@ class _HomePageState extends State<HomePage> {
 
   userContent() {
     return Center(
-      child: Text('Welcome ${_prefs.getString('email')}'),
+      child: Text('Welcome $email'),
     );
   }
 }
