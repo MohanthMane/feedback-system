@@ -1,6 +1,7 @@
 import 'package:feedback_system/Feedback%20creation/namingFeedback.dart';
 import 'package:feedback_system/Previous%20feedbacks/closedFeedbacks.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flare_splash_screen/flare_splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -18,7 +19,16 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: LandingPage(),
+      debugShowCheckedModeBanner: false,
+      home: SplashScreen.navigate(
+        name: 'assets/SplashScreen.flr',
+        next: (context) => LandingPage(),
+        until: () => Future.delayed(Duration(seconds: 5)),
+        //isLoading: false,
+        startAnimation: 'Login Page',
+        fit: BoxFit.cover,
+        backgroundColor: Colors.white,
+      ),
       routes: <String, WidgetBuilder>{
         '/nameFeedback': (BuildContext context) => new NamingFeedback(),
         '/landingpage': (BuildContext context) => new MyApp(),
