@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:feedback_system/home/homepage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -32,7 +33,7 @@ class Auth {
             }
             _prefs.setString("email", _email);
           });
-      Navigator.of(context).pushReplacementNamed('/homepage');
+      Navigator.pushReplacementNamed(context, '/homepage');
     }).catchError((e) {
       print(e);
       AwesomeDialog(
@@ -71,8 +72,8 @@ class Auth {
 
   Future<void> signOut() async {
     await FirebaseAuth.instance.signOut().then((value) {
-      _prefs.setString('email', null);
       _prefs.setBool('isadmin', null);
+      _prefs.setString('email', null);
       Navigator.of(context).pop();
       Navigator.of(context)
           .pushNamedAndRemoveUntil('/landingpage', (v) => false);

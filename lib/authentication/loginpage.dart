@@ -1,5 +1,6 @@
 import 'package:feedback_system/services/authManagement.dart';
 import 'package:flutter/material.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -61,7 +62,10 @@ class _LoginPageState extends State<LoginPage> {
     return <Widget>[
       TextFormField(
         keyboardType: TextInputType.emailAddress,
-        decoration: InputDecoration(labelText: 'Email'),
+        decoration: InputDecoration(
+          labelText: 'Email',
+          suffixIcon: Icon(MdiIcons.email)
+        ),
         validator: (value) {
           return value.isEmpty ? "Email is required" : null;
         },

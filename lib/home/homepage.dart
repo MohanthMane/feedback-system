@@ -2,7 +2,9 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:feedback_system/QRCode/scanner.dart';
 import 'package:feedback_system/services/authManagement.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'hamburger.dart';
@@ -24,7 +26,6 @@ class _HomePageState extends State<HomePage> {
   String qrText;
   bool _statusStorage;
   Stream<QuerySnapshot> feedbacks;
-  SharedPreferences _prefs;
 
   requestStoragePermissions() {
     if (Platform.isAndroid) {
@@ -32,6 +33,10 @@ class _HomePageState extends State<HomePage> {
         setState(() {
           _statusStorage = status;
         });
+      });
+      Permission.storage.isPermanentlyDenied.then((status) {
+        Fluttertoast.showToast(
+            msg: 'Please grant storage permissions in the setting');
       });
       Permission.storage.isUndetermined.then((status) {
         Permission.storage.request();
@@ -52,24 +57,30 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     auth = new Auth(context);
-    SharedPreferences.getInstance().then((prefs) {
-      setState(() {
-        isAdmin = prefs.getBool('admin');
-        email = prefs.getString('email');
-      });
-      print("_prefs set");
-      requestStoragePermissions();
-    });
+    // requestStoragePermissions();
   }
 
   @override
   void deactivate() {
+    print('In deactivate');
     super.deactivate();
   }
 
   @override
   void dispose() {
+    print('in dispose');
     super.dispose();
+  }
+
+  Future<bool> getUserData() async {
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
+
+    setState(() {
+      email = _prefs.getString('email');
+      isAdmin = _prefs.getBool('admin');
+    });
+
+    return isAdmin;
   }
 
   @override
@@ -82,12 +93,21 @@ class _HomePageState extends State<HomePage> {
       drawer: Drawer(
         child: ListView(children: hamBurger.menu(context)),
       ),
-      body: (isAdmin == null)
-          ? loading()
-          : (isAdmin) ? adminContent() : userContent(),
+      body: FutureBuilder(
+        future: getUserData(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            if (isAdmin) return adminContent();
+            return userContent();
+          } else {
+            return loading();
+          }
+        },
+      ),
       floatingActionButton: FloatingActionButton(
           heroTag: 'Scan',
-          child: Icon(Icons.camera),
+          child: Icon(MdiIcons.qrcodeScan),
+          backgroundColor: Colors.blue,
           onPressed: () {
             Navigator.push(
                 context, MaterialPageRoute(builder: (context) => Scanner()));
@@ -104,7 +124,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   adminContent() {
-    print(email);
     return StreamBuilder(
       stream: Firestore.instance
           .collection('/feedbacks')

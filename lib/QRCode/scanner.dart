@@ -44,8 +44,8 @@ class _ScannerState extends State<Scanner> {
                 borderColor: Colors.red,
                 borderRadius: 10,
                 borderLength: 30,
-                borderWidth: 10,
-                cutOutSize: 300
+                borderWidth: 8,
+                cutOutSize: 200
               ),
             ),
           ),
@@ -57,6 +57,7 @@ class _ScannerState extends State<Scanner> {
   _onQrViewCreated(QRViewController controller) {
     this.controller = controller;
     controller.scannedDataStream.listen((data) {
+      print(data);
       Navigator.pushReplacement(context, MaterialPageRoute(
         builder: (context) => Answer(data: data)
       ));

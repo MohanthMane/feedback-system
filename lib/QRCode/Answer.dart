@@ -27,11 +27,17 @@ class _AnswerState extends State<Answer> {
         .document(widget.data)
         .get()
         .then((_data) {
-      setState(() {
-        data = _data;
-        scores = new List<double>.filled(data['questions'].length, 1,
-            growable: false);
-      });
+      if (!_data.exists) {
+        setState(() {
+          data = 'Error';
+        });
+      } else {
+        setState(() {
+          data = _data;
+          scores = new List<double>.filled(data['questions'].length, 1,
+              growable: false);
+        });
+      }
     });
   }
 
@@ -53,15 +59,16 @@ class _AnswerState extends State<Answer> {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
-    return data == null
-        ? SpinKitThreeBounce(color: Colors.blue)
-        : data['attended'].contains(email) ? stopUser() : fetchDocument(width);
+    if(data == null) return SpinKitThreeBounce(color: Colors.blue);
+    else if(data == 'Error') return stopUser('Feedback no longer exists');
+    else if(data['attended'].contains(email)) return stopUser('Can\'t give feedback more than once');
+    else return fetchDocument(width);
   }
 
-  stopUser() {
+  stopUser(data) {
     return Scaffold(
         body: Center(
-      child: Text('Can\'t give feedback more than once'),
+      child: Text(data),
     ));
   }
 
