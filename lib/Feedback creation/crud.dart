@@ -16,7 +16,9 @@ class CrudMethods {
     ProgressDialog pr = new ProgressDialog(context, isDismissible: false);
     pr.style(message: 'Generating QR Code', progressWidget: CircularProgressIndicator());
     pr.show();
+    int uniqueId = new DateTime.now().millisecondsSinceEpoch ~/ 1000;
     Firestore.instance.collection('feedbacks').add({
+      'id': uniqueId,
       'name': feedback.name,
       'host': feedback.host,
       'host_id': feedback.hostId,

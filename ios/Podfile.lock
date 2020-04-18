@@ -246,10 +246,6 @@ PODS:
     - FirebaseCore (~> 6.0)
     - GTMSessionFetcher/Core (~> 1.1)
   - Flutter (1.0.0)
-  - flutter_plugin_android_lifecycle (0.0.1):
-    - Flutter
-  - flutter_qr_reader (0.0.1):
-    - Flutter
   - flutter_share_file (0.0.1):
     - Flutter
   - fluttertoast (0.0.2):
@@ -301,8 +297,6 @@ PODS:
   - GTMSessionFetcher/Core (1.3.1)
   - image_gallery_saver (0.0.1):
     - Flutter
-  - image_picker (0.0.1):
-    - Flutter
   - image_picker_saver (0.0.1):
     - Flutter
   - leveldb-library (1.22)
@@ -336,12 +330,9 @@ DEPENDENCIES:
   - firebase_core_web (from `.symlinks/plugins/firebase_core_web/ios`)
   - firebase_storage (from `.symlinks/plugins/firebase_storage/ios`)
   - Flutter (from `Flutter`)
-  - flutter_plugin_android_lifecycle (from `.symlinks/plugins/flutter_plugin_android_lifecycle/ios`)
-  - flutter_qr_reader (from `.symlinks/plugins/flutter_qr_reader/ios`)
   - flutter_share_file (from `.symlinks/plugins/flutter_share_file/ios`)
   - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
   - image_gallery_saver (from `.symlinks/plugins/image_gallery_saver/ios`)
-  - image_picker (from `.symlinks/plugins/image_picker/ios`)
   - image_picker_saver (from `.symlinks/plugins/image_picker_saver/ios`)
   - path_provider (from `.symlinks/plugins/path_provider/ios`)
   - permission_handler (from `.symlinks/plugins/permission_handler/ios`)
@@ -391,18 +382,12 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/firebase_storage/ios"
   Flutter:
     :path: Flutter
-  flutter_plugin_android_lifecycle:
-    :path: ".symlinks/plugins/flutter_plugin_android_lifecycle/ios"
-  flutter_qr_reader:
-    :path: ".symlinks/plugins/flutter_qr_reader/ios"
   flutter_share_file:
     :path: ".symlinks/plugins/flutter_share_file/ios"
   fluttertoast:
     :path: ".symlinks/plugins/fluttertoast/ios"
   image_gallery_saver:
     :path: ".symlinks/plugins/image_gallery_saver/ios"
-  image_picker:
-    :path: ".symlinks/plugins/image_picker/ios"
   image_picker_saver:
     :path: ".symlinks/plugins/image_picker_saver/ios"
   path_provider:
@@ -440,8 +425,6 @@ SPEC CHECKSUMS:
   FirebaseInstanceID: ce993a3c3670a8f5d47ce371ac5d143c560608c5
   FirebaseStorage: 93fe2f8190a01bfb2b2c4932df7d679744c4ef1d
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
-  flutter_plugin_android_lifecycle: 47de533a02850f070f5696a623995e93eddcdb9b
-  flutter_qr_reader: 254fd9eea45a65ef461e050d6607daf9cfb753e8
   flutter_share_file: 52924ead227a84da296c7667cae94eea86962eb5
   fluttertoast: b644586ef3b16f67fae9a1f8754cef6b2d6b634b
   GoogleAppMeasurement: db118eb61a97dd8c4f7014e368d3c335cbbcf80a
@@ -452,7 +435,6 @@ SPEC CHECKSUMS:
   gRPC-Core: c9aef9a261a1247e881b18059b84d597293c9947
   GTMSessionFetcher: cea130bbfe5a7edc8d06d3f0d17288c32ffe9925
   image_gallery_saver: 73b3cd8ad9c950c739878af9c311744d1bf5405d
-  image_picker: e3eacd46b94694dde7cf2705955cece853aa1a8f
   image_picker_saver: 4f28bd70e1efdca68ad88beab0f11d22cffe04f6
   leveldb-library: 55d93ee664b4007aac644a782d11da33fba316f7
   MTBBarcodeScanner: f453b33c4b7dfe545d8c6484ed744d55671788cb

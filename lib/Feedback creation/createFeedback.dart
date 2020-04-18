@@ -1,14 +1,10 @@
 import 'package:feedback_system/Feedback%20creation/crud.dart';
 import 'package:feedback_system/models/feedback_model.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-enum MetricType { 
-  Satisfaction, 
-  GoalCompletionRate, 
-  EffortScore, 
-  SmileyRating 
-}
+enum MetricType { Satisfaction, GoalCompletionRate, EffortScore, SmileyRating }
 
 class Question {
   String questionData = "";
@@ -172,18 +168,8 @@ class _CreateFeedbackState extends State<CreateFeedback> {
                   content: Text('Question deleted'),
                 )));
               },
-              background: Container(
-                color: Colors.red,
-                child: Center(
-                  child: Text(
-                    'Delete',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
+              background: slideBackground('start'),
+              secondaryBackground: slideBackground('end'),
               child: ListTile(
                 leading: Text(
                   (index + 1).toString() + ")",
@@ -224,6 +210,36 @@ class _CreateFeedbackState extends State<CreateFeedback> {
           ),
         )
       ],
+    );
+  }
+
+  slideBackground(position) {
+    return Container(
+      color: Colors.red,
+      child: Align(
+        child: Row(
+          mainAxisAlignment: ((position == 'end') ? MainAxisAlignment.end : MainAxisAlignment.start),
+          children: <Widget>[
+            Icon(
+              CupertinoIcons.delete,
+              color: Colors.white,
+              size: 40,
+            ),
+            Text(
+              " Delete",
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+              ),
+              textAlign: ((position == 'end') ? TextAlign.right : TextAlign.left),
+            ),
+            SizedBox(
+              width: 20,
+            ),
+          ],
+        ),
+        alignment: ((position == 'end') ? Alignment.centerRight : Alignment.centerLeft),
+      ),
     );
   }
 }

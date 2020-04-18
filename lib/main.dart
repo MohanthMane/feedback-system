@@ -6,7 +6,6 @@ import 'package:flare_splash_screen/flare_splash_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
 import 'Feedback creation/createFeedback.dart';
 import 'authentication/loginpage.dart';
 import 'home/homepage.dart';
@@ -34,7 +33,7 @@ class MyApp extends StatelessWidget {
       routes: <String, WidgetBuilder>{
         '/signup': (BuildContext context) => new SignUp(),
         '/nameFeedback': (BuildContext context) => new NamingFeedback(),
-        '/landingpage': (BuildContext context) => new MyApp(),
+        '/landingpage': (BuildContext context) => new LoginPage(),
         '/homepage': (BuildContext context) => new HomePage(),
         '/createFeedback': (BuildContext context) => new CreateFeedback(),
         '/closedFeedback': (BuildContext context) => new ClosedFeedbacks()
