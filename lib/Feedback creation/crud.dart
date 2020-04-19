@@ -14,7 +14,7 @@ class CrudMethods {
   // addData, getData, updateData
   postFeedback(context, feedback) {
     ProgressDialog pr = new ProgressDialog(context, isDismissible: false);
-    pr.style(message: 'Generating QR Code', progressWidget: CircularProgressIndicator());
+    pr.style(message: 'Generating QR Code');
     pr.show();
     int uniqueId = new DateTime.now().millisecondsSinceEpoch ~/ 1000;
     Firestore.instance.collection('feedbacks').add({
@@ -46,7 +46,7 @@ class CrudMethods {
           animType: AnimType.BOTTOMSLIDE,
           tittle: 'Error',
           desc: 'Failed to upload the data',
-          dismissOnTouchOutside: false,
+          dismissOnTouchOutside: true,
           btnOkOnPress: () {
             Navigator.of(context, rootNavigator: false).pop();
           }).show();

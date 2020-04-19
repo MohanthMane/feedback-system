@@ -27,24 +27,24 @@ class GenerateScreenState extends State<GenerateScreen> {
   bool _status;
   var filePath;
 
-  requestPermissions() {
+  requestPermissions() async {
     if (Platform.isAndroid) {
-      Permission.storage.isGranted.then((status) {
+      await Permission.storage.isGranted.then((status) {
         setState(() {
           _status = status;
         });
       });
-      Permission.storage.isUndetermined.then((status) {
-        Permission.storage.request();
+      await Permission.storage.isUndetermined.then((status) async {
+        await Permission.storage.request();
       });
     } else if (Platform.isIOS) {
-      Permission.photos.isGranted.then((status) {
+      await Permission.photos.isGranted.then((status) {
         setState(() {
           _status = status;
         });
       });
-      Permission.photos.isUndetermined.then((status) {
-        Permission.storage.request();
+      await Permission.photos.isUndetermined.then((status) async {
+        await Permission.storage.request();
       });
     }
   }
@@ -53,30 +53,40 @@ class GenerateScreenState extends State<GenerateScreen> {
   void initState() {
     super.initState();
     _dataString = widget.docID;
-    requestPermissions();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('QR Code Generator'),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.file_download),
-            onPressed: _captureAndSave,
-          ),
-          IconButton(
-            icon: Icon(Icons.share),
-            onPressed: _captureAndSharePng,
-          ),
-        ],
-      ),
+      appBar: AppBar(title: Text('QR Code Generator'), actions: getActions()),
       body: _contentWidget(),
     );
   }
 
+  getActions() {
+    if (Platform.isAndroid) {
+      return <Widget>[
+        IconButton(
+          icon: Icon(Icons.file_download),
+          onPressed: _captureAndSave,
+        ),
+        IconButton(
+          icon: Icon(Icons.share),
+          onPressed: _captureAndSharePng,
+        ),
+      ];
+    } else {
+      return <Widget>[
+        IconButton(
+          icon: Icon(Icons.file_download),
+          onPressed: _captureAndSave,
+        ),
+      ];
+    }
+  }
+
   Future<void> _captureAndSharePng() async {
+    await requestPermissions();
     try {
       RenderRepaintBoundary boundary =
           globalKey.currentContext.findRenderObject();
@@ -97,6 +107,7 @@ class GenerateScreenState extends State<GenerateScreen> {
   }
 
   Future<void> _captureAndSave() async {
+    await requestPermissions();
     try {
       RenderRepaintBoundary boundary =
           globalKey.currentContext.findRenderObject();

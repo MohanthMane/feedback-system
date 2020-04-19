@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
       home: SplashScreen.navigate(
         name: 'assets/SplashScreen.flr',
         next: (context) => LandingPage(),
-        until: () => Future.delayed(Duration(seconds: 5)),
+        until: () => Future.delayed(Duration(seconds: 0)),
         //isLoading: false,
         startAnimation: 'Login Page',
         fit: BoxFit.cover,
@@ -58,7 +58,9 @@ class _LandingPageState extends State<LandingPage> {
           if (user == null) {
             return LoginPage();
           }
-          return HomePage();
+          if(user.isEmailVerified)
+            return HomePage();
+          else return LoginPage();
         } else if (snapshot.connectionState == ConnectionState.waiting) {
           return Scaffold(
             body: Center(

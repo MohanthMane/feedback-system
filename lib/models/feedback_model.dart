@@ -5,7 +5,7 @@ enum MetricType { Satisfaction, GoalCompletionRate, EffortScore, SmileyRating }
 class FeedbackModel {
   List<Question> questionObjects;
   List<String> questions, metrics;
-  List<int> scores;
+  Map<String,List<int>> scores;
   List<String> remarks;
   List<String> attended;
   String type;
@@ -15,7 +15,6 @@ class FeedbackModel {
 
   FeedbackModel(questions, type, name, host, hostId) {
     this.questionObjects = questions;
-    this.scores = new List<int>.filled(questions.length, 0, growable: false);
     this.remarks = new List<String>();
     this.attended = new List<String>();
     this.questions = new List<String>();
@@ -26,13 +25,33 @@ class FeedbackModel {
     this.host = host;
     this.hostId = hostId;
 
-    this.questionObjects.forEach((o){
+    this.questionObjects.forEach((o) {
       decodeObject(o);
     });
+    this.scores = initializeScores(metrics);
+  }
+
+  initializeScores(metrics) {
+    Map<String,List<int>> scores = new Map<String,List<int>>();
+    int idx = 0;
+    metrics.forEach((metric) {
+      int length;
+      if (metric == 'EffortScore')
+        length = 5;
+      else if (metric == 'SmileyRating')
+        length = 5;
+      else if (metric == 'GoalCompletionRate')
+        length = 3;
+      else
+        length = 10;
+      List<int> tempList = new List<int>.filled(length, 0,growable: false);
+      scores[idx.toString()] = (tempList);
+      idx++;
+    });
+    return scores;
   }
 
   decodeObject(Question object) {
-    print(object.questionData);
     this.questions.add(object.questionData);
     this.metrics.add(enumToString(object.metricType));
   }

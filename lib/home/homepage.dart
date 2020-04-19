@@ -83,6 +83,24 @@ class _HomePageState extends State<HomePage> {
     return isAdmin;
   }
 
+  requestCamera() async {
+    if(Platform.isAndroid) {
+      await Permission.camera.isUndetermined.then((status) async {
+        await Permission.camera.request();
+      });
+      await Permission.camera.isDenied.then((status) async {
+        await Permission.camera.request();
+      });
+    } else {
+      await Permission.photos.isUndetermined.then((status) async {
+        await Permission.photos.request();
+      });
+      await Permission.photos.isDenied.then((status) async {
+        await Permission.photos.request();
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -108,7 +126,8 @@ class _HomePageState extends State<HomePage> {
           heroTag: 'Scan',
           child: Icon(MdiIcons.qrcodeScan),
           backgroundColor: Colors.blue,
-          onPressed: () {
+          onPressed: () async {
+            await requestCamera();
             Navigator.push(
                 context, MaterialPageRoute(builder: (context) => Scanner()));
           },

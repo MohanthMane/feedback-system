@@ -1,5 +1,8 @@
+import 'package:feedback_system/authentication/ForgotPassword.dart';
 import 'package:feedback_system/services/authManagement.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class LoginPage extends StatefulWidget {
@@ -31,8 +34,9 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   validateAndSubmit() async {
+    FocusScope.of(context).unfocus();
     if (validateAndSave()) {
-      auth.signIn(_email,_password);
+      auth.signIn(_email, _password);
     }
   }
 
@@ -63,9 +67,7 @@ class _LoginPageState extends State<LoginPage> {
       TextFormField(
         keyboardType: TextInputType.emailAddress,
         decoration: InputDecoration(
-          labelText: 'Email',
-          suffixIcon: Icon(MdiIcons.email)
-        ),
+            labelText: 'Email', suffixIcon: Icon(MdiIcons.email)),
         validator: (value) {
           return value.isEmpty ? "Email is required" : null;
         },
@@ -74,17 +76,15 @@ class _LoginPageState extends State<LoginPage> {
       SizedBox(height: 15),
       TextFormField(
         decoration: InputDecoration(
-          labelText: 'Password',
-          suffixIcon: IconButton(
-                          icon: Icon(
-                isHidden ? Icons.visibility : Icons.visibility_off),
-                onPressed: () {
-                  setState(() {
-                    isHidden = !isHidden;
-                  });
-                },
-            )
-        ),
+            labelText: 'Password',
+            suffixIcon: IconButton(
+              icon: Icon(isHidden ? Icons.visibility : Icons.visibility_off),
+              onPressed: () {
+                setState(() {
+                  isHidden = !isHidden;
+                });
+              },
+            )),
         obscureText: isHidden,
         validator: (value) {
           if (value.isEmpty)
@@ -96,34 +96,65 @@ class _LoginPageState extends State<LoginPage> {
         },
         onSaved: (value) => _password = value,
       ),
-      SizedBox(height: 15),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      Align(
+        alignment: Alignment.centerRight,
+        child: FlatButton(
+          child: Text(
+            'Forgot password?',
+            style: TextStyle(color: Colors.blue),
+          ),
+          onPressed: () {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => ForgotPassword()));
+          },
+        ),
+      ),
+      SizedBox(
+        width: width / 2,
+        child: RaisedButton(
+          child: Text(
+            'Login',
+            style: TextStyle(color: Colors.white),
+          ),
+          color: Colors.blue,
+          onPressed: validateAndSubmit,
+        ),
+      ),
+      SizedBox(
+        width: width / 2,
+        child: RaisedButton(
+          child: Text(
+            'Register',
+            style: TextStyle(color: Colors.white),
+          ),
+          color: Colors.blue,
+          onPressed: () {
+            Navigator.pushNamed(context, '/signup');
+          },
+        ),
+      ),
+      SizedBox(
+        height: 10,
+      ),
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          SizedBox(
-            width: width/2,
-                      child: RaisedButton(
-              child: Text(
-                'Login',
-                style: TextStyle(color: Colors.white),
-              ),
-              color: Colors.blue,
-              onPressed: validateAndSubmit,
+          Text('Issue with login? Verify your email',
+              style: TextStyle(fontWeight: FontWeight.bold)),
+          FlatButton(
+            child: Text(
+              'Click here to send again',
+              style: TextStyle(color: Colors.red),
             ),
-          ),
-          SizedBox(
-            width: width/2,
-                      child: RaisedButton(
-              child: Text(
-                'Register',
-                style: TextStyle(color: Colors.white),
-              ),
-              color: Colors.blue,
-              onPressed: () {
-                Navigator.pushNamed(context, '/signup');
-              },
-            ),
-          ),
+            onPressed: () async {
+              FirebaseUser user = await auth.getUser();
+              if (user == null) {
+                Fluttertoast.showToast(msg: 'User not found, Try signing up');
+              } else {
+                user.sendEmailVerification();
+              }
+            },
+          )
         ],
       )
     ];

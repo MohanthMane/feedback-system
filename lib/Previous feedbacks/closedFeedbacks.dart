@@ -38,13 +38,33 @@ class _ClosedFeedbacksState extends State<ClosedFeedbacks> {
     instantiate();
   }
 
+  Future<bool> getUserData() async {
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
+
+    setState(() {
+      email = _prefs.getString('email');
+      isAdmin = _prefs.getBool('admin');
+    });
+
+    return isAdmin;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Closed feedbacks'),
       ),
-      body: closedList(),
+      body: FutureBuilder(
+        future: getUserData(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return closedList();
+          } else {
+            return loading();
+          }
+        },
+      ),
     );
   }
 
@@ -57,7 +77,7 @@ class _ClosedFeedbacksState extends State<ClosedFeedbacks> {
       stream: Firestore.instance.collection('/feedbacks').where('host_id',isEqualTo: email).where('status',isEqualTo: "close").snapshots(),
       builder: (context, snapshot) {
         if(snapshot.hasData) {
-          print('Has data');
+          if(snapshot.data.documents.length == 0) return userContent();
           return ListView.separated(
             separatorBuilder: (context, index) =>
                 Divider(height: 1.0, color: Colors.grey),
@@ -76,10 +96,8 @@ class _ClosedFeedbacksState extends State<ClosedFeedbacks> {
             },
           );
         } else if(snapshot.connectionState == ConnectionState.done && !snapshot.hasData) {
-          print('no data');
-          return Center(child: Text('No active feedbacks'));
+          return userContent();
         } else {
-          print('Fetching data');
           return loading();
         }
       },
@@ -88,7 +106,7 @@ class _ClosedFeedbacksState extends State<ClosedFeedbacks> {
 
   userContent() {
     return Center(
-      child: Text('Welcome ${_prefs.getString('email')}'),
+      child: Text('No feedbacks hosted'),
     );
   }
 }

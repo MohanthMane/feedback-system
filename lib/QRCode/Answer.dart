@@ -18,7 +18,7 @@ class _AnswerState extends State<Answer> {
   bool attended;
   bool perform = false;
   String email;
-  List<double> scores;
+  List<double> SliderScores;
   List<dynamic> updated;
 
   instantiate() async {
@@ -34,7 +34,7 @@ class _AnswerState extends State<Answer> {
       } else {
         setState(() {
           data = _data;
-          scores = new List<double>.filled(data['questions'].length, 1,
+          SliderScores = new List<double>.filled(data['questions'].length, 1,
               growable: false);
         });
       }
@@ -153,15 +153,15 @@ class _AnswerState extends State<Answer> {
     return SliderTheme(
       data: themeData(),
       child: Slider(
-        value: scores[index],
+        value: SliderScores[index],
         min: 1,
         max: 10,
         divisions: 9,
-        label: scores[index].toString(),
+        label: SliderScores[index].toString(),
         onChanged: (_value) {
           setState(
             () {
-              scores[index] = _value;
+              SliderScores[index] = _value;
             },
           );
         },
@@ -179,10 +179,10 @@ class _AnswerState extends State<Answer> {
       var prev = List();
       for (int x = 0; x < doc['scores'].length; x++) prev.add(doc['scores'][x]);
       int idx = 0;
-      while (idx < scores.length) {
-        prev[idx] += scores[idx];
-        idx++;
-      }
+      // while (idx < scores.length) {
+      //   prev[idx] += scores[idx];
+      //   idx++;
+      // }
       setState(() {
         updated = prev;
       });

@@ -99,8 +99,7 @@ class _EditFeedbackState extends State<EditFeedback> {
   endFeedback() async {
     ProgressDialog pr = new ProgressDialog(context, isDismissible: false);
     pr.style(
-        message: 'Closing feedback',
-        progressWidget: CircularProgressIndicator());
+        message: 'Closing feedback');
     pr.show();
     await Firestore.instance
         .collection('/feedbacks')
