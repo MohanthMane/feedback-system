@@ -20,19 +20,13 @@ class HamBurger {
             Navigator.of(context).pop();
             Navigator.of(context).pushNamed('/nameFeedback');
           } else {
-            Fluttertoast.showToast(
-                msg: "Permission denied!",
-                toastLength: Toast.LENGTH_SHORT,
-                timeInSecForIos: 1,
-                textColor: Colors.white,
-                backgroundColor: Colors.black,
-                gravity: ToastGravity.BOTTOM);
+            Fluttertoast.showToast(msg: "Permission denied!");
           }
         },
       ),
       ListTile(
         title: Text('Open feedbacks'),
-        onTap: () async {
+        onTap: () {
           Navigator.of(context).pop();
           Navigator.of(context).pushNamed('/closedFeedback');
         },

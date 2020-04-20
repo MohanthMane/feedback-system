@@ -35,7 +35,7 @@ class CrudMethods {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => GenerateScreen(docID: doc.documentID)
+          builder: (context) => GenerateScreen(docID: doc.documentID,name: feedback.name,id: uniqueId,)
         )
       );
     }).catchError((e) {

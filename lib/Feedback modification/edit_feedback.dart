@@ -88,7 +88,7 @@ class _EditFeedbackState extends State<EditFeedback> {
               labelStyle: TextStyle(fontSize: 18.0,color: Colors.white70),
               onTap: () {
                 Navigator.push(context, MaterialPageRoute(
-                  builder: (context) => GenerateScreen(docID: widget.feedback.documentID,)
+                  builder: (context) => GenerateScreen(docID: widget.feedback.documentID,name: widget.feedback.data['name'],id: widget.feedback.data['id'],)
                 ));
               }
             ),

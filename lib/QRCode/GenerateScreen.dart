@@ -14,8 +14,10 @@ import 'package:share_extend/share_extend.dart';
 
 class GenerateScreen extends StatefulWidget {
   final String docID;
+  final String name;
+  final int id;
 
-  GenerateScreen({this.docID});
+  GenerateScreen({this.docID, this.name, this.id});
 
   @override
   State<StatefulWidget> createState() => GenerateScreenState();
@@ -139,11 +141,12 @@ class GenerateScreenState extends State<GenerateScreen> {
   }
 
   _contentWidget() {
+    final width = MediaQuery.of(context).size.width;
     final bodyHeight = MediaQuery.of(context).size.height -
         MediaQuery.of(context).viewInsets.bottom;
     return Container(
-      margin: EdgeInsets.all(15),
-      color: const Color(0xFFFFFFFF),
+      margin: EdgeInsets.all(5),
+      color: Colors.white,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
@@ -151,10 +154,37 @@ class GenerateScreenState extends State<GenerateScreen> {
             child: Center(
               child: RepaintBoundary(
                 key: globalKey,
-                child: QrImage(
-                  data: _dataString,
-                  backgroundColor: Colors.white,
-                  size: 0.5 * bodyHeight,
+                child: SizedBox(
+                  height: 0.6 * bodyHeight,
+                  child: Column(
+                    children: <Widget>[
+                      QrImage(
+                        data: _dataString,
+                        backgroundColor: Colors.white,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              widget.name.toUpperCase(),
+                              style: TextStyle(
+                                  fontSize: 16, backgroundColor: Colors.white),
+                            ),
+                          ),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: Text(
+                              'Code: ' + widget.id.toString(),
+                              style: TextStyle(
+                                  fontSize: 16, backgroundColor: Colors.white),
+                            ),
+                          )
+                        ],
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),
