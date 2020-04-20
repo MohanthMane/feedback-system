@@ -1,11 +1,13 @@
 import 'package:feedback_system/Feedback%20creation/namingFeedback.dart';
 import 'package:feedback_system/Previous%20feedbacks/closedFeedbacks.dart';
 import 'package:feedback_system/authentication/signup.dart';
+import 'package:feedback_system/services/authManagement.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flare_splash_screen/flare_splash_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'Feedback creation/createFeedback.dart';
 import 'authentication/loginpage.dart';
@@ -25,7 +27,7 @@ class MyApp extends StatelessWidget {
       home: SplashScreen.navigate(
         name: 'assets/SplashScreen.flr',
         next: (context) => LandingPage(),
-        until: () => Future.delayed(Duration(seconds: 5)),
+        until: () => updateData(context),
         //isLoading: false,
         startAnimation: 'Login Page',
         fit: BoxFit.cover,
@@ -40,6 +42,18 @@ class MyApp extends StatelessWidget {
         '/closedFeedback': (BuildContext context) => new ClosedFeedbacks()
       },
     );
+  }
+
+  updateData(context) async {
+    String email;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    email = prefs.getString('email');
+    if (email != null) {
+      Auth auth = new Auth(context);
+      await auth.getAdmins(email).then((docs) {
+        prefs.setBool('admin', docs.documents.length > 0);
+      });
+    }
   }
 }
 
@@ -59,7 +73,10 @@ class _LandingPageState extends State<LandingPage> {
           if (user == null) {
             return LoginPage();
           }
-          return HomePage();
+          if (user.isEmailVerified)
+            return HomePage();
+          else
+            return LoginPage();
         } else if (snapshot.connectionState == ConnectionState.waiting) {
           return Scaffold(
             body: Center(

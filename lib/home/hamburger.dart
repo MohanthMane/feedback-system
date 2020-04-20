@@ -20,40 +20,23 @@ class HamBurger {
             Navigator.of(context).pop();
             Navigator.of(context).pushNamed('/nameFeedback');
           } else {
-            Fluttertoast.showToast(
-                msg: "Permission denied!",
-                toastLength: Toast.LENGTH_SHORT,
-                timeInSecForIos: 1,
-                textColor: Colors.white,
-                backgroundColor: Colors.black,
-                gravity: ToastGravity.BOTTOM);
+            Fluttertoast.showToast(msg: "Permission denied!");
           }
         },
       ),
       ListTile(
         title: Text('Open feedbacks'),
-        onTap: () async {
-          _prefs = await SharedPreferences.getInstance();
-          bool isAdmin = _prefs.getBool("admin");
-          if (isAdmin) {
-            Navigator.of(context).pop();
-            Navigator.of(context).pushNamed('/closedFeedback');
-          } else {
-            Fluttertoast.showToast(
-                msg: "Permission denied!",
-                toastLength: Toast.LENGTH_SHORT,
-                timeInSecForIos: 1,
-                textColor: Colors.white,
-                backgroundColor: Colors.black,
-                gravity: ToastGravity.BOTTOM);
-          }
+        onTap: () {
+          Navigator.of(context).pop();
+          Navigator.of(context).pushNamed('/closedFeedback');
         },
+      ),
+      ListTile(
+        title: Text('Manage admins'),
       ),
       ListTile(
           title: Text('Logout'),
           onTap: () {
-//            _prefs.remove("email");
-//            _prefs.remove("admin");
             auth.signOut();
           })
     ];

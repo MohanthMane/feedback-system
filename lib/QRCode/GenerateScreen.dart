@@ -14,8 +14,10 @@ import 'package:share_extend/share_extend.dart';
 
 class GenerateScreen extends StatefulWidget {
   final String docID;
+  final String name;
+  final int id;
 
-  GenerateScreen({this.docID});
+  GenerateScreen({this.docID, this.name, this.id});
 
   @override
   State<StatefulWidget> createState() => GenerateScreenState();
@@ -27,24 +29,24 @@ class GenerateScreenState extends State<GenerateScreen> {
   bool _status;
   var filePath;
 
-  requestPermissions() {
+  requestPermissions() async {
     if (Platform.isAndroid) {
-      Permission.storage.isGranted.then((status) {
+      await Permission.storage.isGranted.then((status) {
         setState(() {
           _status = status;
         });
       });
-      Permission.storage.isUndetermined.then((status) {
-        Permission.storage.request();
+      await Permission.storage.isUndetermined.then((status) async {
+        await Permission.storage.request();
       });
     } else if (Platform.isIOS) {
-      Permission.photos.isGranted.then((status) {
+      await Permission.photos.isGranted.then((status) {
         setState(() {
           _status = status;
         });
       });
-      Permission.photos.isUndetermined.then((status) {
-        Permission.storage.request();
+      await Permission.photos.isUndetermined.then((status) async {
+        await Permission.storage.request();
       });
     }
   }
@@ -53,30 +55,40 @@ class GenerateScreenState extends State<GenerateScreen> {
   void initState() {
     super.initState();
     _dataString = widget.docID;
-    requestPermissions();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('QR Code Generator'),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.file_download),
-            onPressed: _captureAndSave,
-          ),
-          IconButton(
-            icon: Icon(Icons.share),
-            onPressed: _captureAndSharePng,
-          ),
-        ],
-      ),
+      appBar: AppBar(title: Text('QR Code Generator'), actions: getActions()),
       body: _contentWidget(),
     );
   }
 
+  getActions() {
+    if (Platform.isAndroid) {
+      return <Widget>[
+        IconButton(
+          icon: Icon(Icons.file_download),
+          onPressed: _captureAndSave,
+        ),
+        IconButton(
+          icon: Icon(Icons.share),
+          onPressed: _captureAndSharePng,
+        ),
+      ];
+    } else {
+      return <Widget>[
+        IconButton(
+          icon: Icon(Icons.file_download),
+          onPressed: _captureAndSave,
+        ),
+      ];
+    }
+  }
+
   Future<void> _captureAndSharePng() async {
+    await requestPermissions();
     try {
       RenderRepaintBoundary boundary =
           globalKey.currentContext.findRenderObject();
@@ -97,6 +109,7 @@ class GenerateScreenState extends State<GenerateScreen> {
   }
 
   Future<void> _captureAndSave() async {
+    await requestPermissions();
     try {
       RenderRepaintBoundary boundary =
           globalKey.currentContext.findRenderObject();
@@ -128,11 +141,12 @@ class GenerateScreenState extends State<GenerateScreen> {
   }
 
   _contentWidget() {
+    final width = MediaQuery.of(context).size.width;
     final bodyHeight = MediaQuery.of(context).size.height -
         MediaQuery.of(context).viewInsets.bottom;
     return Container(
-      margin: EdgeInsets.all(15),
-      color: const Color(0xFFFFFFFF),
+      margin: EdgeInsets.all(5),
+      color: Colors.white,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
@@ -140,10 +154,37 @@ class GenerateScreenState extends State<GenerateScreen> {
             child: Center(
               child: RepaintBoundary(
                 key: globalKey,
-                child: QrImage(
-                  data: _dataString,
-                  backgroundColor: Colors.white,
-                  size: 0.5 * bodyHeight,
+                child: SizedBox(
+                  height: 0.6 * bodyHeight,
+                  child: Column(
+                    children: <Widget>[
+                      QrImage(
+                        data: _dataString,
+                        backgroundColor: Colors.white,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              widget.name.toUpperCase(),
+                              style: TextStyle(
+                                  fontSize: 16, backgroundColor: Colors.white),
+                            ),
+                          ),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: Text(
+                              'Code: ' + widget.id.toString(),
+                              style: TextStyle(
+                                  fontSize: 16, backgroundColor: Colors.white),
+                            ),
+                          )
+                        ],
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),

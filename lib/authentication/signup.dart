@@ -24,8 +24,9 @@ class _SignUpState extends State<SignUp> {
   }
 
   validateAndSubmit() {
+    FocusScope.of(context).unfocus();
     if(validateAndSave()) {
-      auth.signUp(email, password);
+      auth.signUp(name, email, password);
     }
   }
 
@@ -58,6 +59,18 @@ class _SignUpState extends State<SignUp> {
   List<Widget> registerForm() {
     double width = MediaQuery.of(context).size.width;
     return <Widget>[
+      TextFormField(
+        keyboardType: TextInputType.text,
+        decoration: InputDecoration(
+          labelText: 'Name',
+          suffixIcon: Icon(MdiIcons.account)
+        ),
+        validator: (value) {
+          return value.isEmpty ? "Name is required" : null;
+        },
+        onSaved: (value) => name = value,
+      ),
+      SizedBox(height: 15,),
       TextFormField(
         keyboardType: TextInputType.emailAddress,
         decoration: InputDecoration(
@@ -102,7 +115,9 @@ class _SignUpState extends State<SignUp> {
           child: Text('Sign up',style: TextStyle(color: Colors.white)),
           onPressed: validateAndSubmit,
         ),
-      )
+      ),
+      SizedBox(height: 10,),
+      Center(child: Text('Make sure you verify your email before login',style: TextStyle(fontWeight: FontWeight.bold),))
     ];
   }
 }

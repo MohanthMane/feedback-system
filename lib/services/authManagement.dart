@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:feedback_system/home/homepage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -22,9 +22,12 @@ class Auth {
   }
 
   Future<void> signIn(String _email, String _password) async {
+    ProgressDialog pr = new ProgressDialog(context);
+    pr.style(message: 'Just a moment');
+    pr.show();
     await FirebaseAuth.instance
         .signInWithEmailAndPassword(email: _email, password: _password)
-        .then((user) {
+        .then((user) async {
           getAdmins(_email).then((docs) {
             if(docs.documents.length > 0) {
               _prefs.setBool("admin", true);
@@ -33,8 +36,16 @@ class Auth {
             }
             _prefs.setString("email", _email);
           });
-      Navigator.pushReplacementNamed(context, '/homepage');
+      FirebaseUser user = await getUser();
+      pr.hide();
+      if(user.isEmailVerified) {
+        Navigator.pushReplacementNamed(context, '/homepage');
+      }
+      else {
+        Fluttertoast.showToast(msg: 'Email not verified!');
+      }
     }).catchError((e) {
+      pr.hide();
       print(e);
       AwesomeDialog(
         context: context,
@@ -46,13 +57,20 @@ class Auth {
     });
   }
 
-  Future<String> signUp(String email, String password) async {
+  Future<String> signUp(String name,String email, String password) async {
     ProgressDialog pr = new ProgressDialog(context);
-    pr.style(message: 'Creating account', progressWidget: CircularProgressIndicator());
+    pr.style(message: 'Creating account');
+    pr.show();
     FirebaseUser user = (await _firebaseAuth.createUserWithEmailAndPassword(
             email: email, password: password))
         .user;
+
+    // Scaffold.of(context).showSnackBar(SnackBar(content: Text('Check your email for verification link'),));
+
+    await user.sendEmailVerification();
     await Firestore.instance.collection('/users').add({
+      'uid': user.uid,
+      'name': name,
       'email': email,
       'isadmin': false
     }).then((val) {
@@ -60,9 +78,13 @@ class Auth {
       _prefs.setString('email', email);
       _prefs.setBool('isadmin', false);
       Navigator.of(context).pop();
-      Navigator.of(context).pushReplacementNamed('/homepage');
     });
     return user.uid;
+  }
+
+  getUser() async {
+    FirebaseUser user = await _firebaseAuth.currentUser();
+    return user;
   }
 
   Future<String> getUserEmail() async {
