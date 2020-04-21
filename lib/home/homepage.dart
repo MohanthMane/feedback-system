@@ -1,16 +1,18 @@
 import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:feedback_system/Feedback modification/edit_feedback.dart';
 import 'package:feedback_system/QRCode/scanner.dart';
 import 'package:feedback_system/services/authManagement.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import 'hamburger.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:flutter/material.dart';
-import 'package:feedback_system/Feedback modification/edit_feedback.dart';
 
 class HomePage extends StatefulWidget {
   @override
