@@ -35,6 +35,7 @@ class HamBurger {
       ListTile(
         title: Text('Manage admins'),
         onTap: () {
+          Navigator.of(context).pop();
           Navigator.push(context, MaterialPageRoute(builder: (context) => ManageAdmins()));
         },
       ),

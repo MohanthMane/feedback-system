@@ -141,7 +141,7 @@ class GenerateScreenState extends State<GenerateScreen> {
   }
 
   _contentWidget() {
-    final width = MediaQuery.of(context).size.width;
+    // final width = MediaQuery.of(context).size.width;
     final bodyHeight = MediaQuery.of(context).size.height -
         MediaQuery.of(context).viewInsets.bottom;
     return Container(
@@ -158,30 +158,25 @@ class GenerateScreenState extends State<GenerateScreen> {
                   height: 0.6 * bodyHeight,
                   child: Column(
                     children: <Widget>[
+                      Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          widget.name.toUpperCase(),
+                          style: TextStyle(
+                              fontSize: 16, backgroundColor: Colors.white),
+                        ),
+                      ),
                       QrImage(
                         data: _dataString,
                         backgroundColor: Colors.white,
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              widget.name.toUpperCase(),
-                              style: TextStyle(
-                                  fontSize: 16, backgroundColor: Colors.white),
-                            ),
-                          ),
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: Text(
-                              'Code: ' + widget.id.toString(),
-                              style: TextStyle(
-                                  fontSize: 16, backgroundColor: Colors.white),
-                            ),
-                          )
-                        ],
+                      Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          'Code: ' + widget.id.toString(),
+                          style: TextStyle(
+                              fontSize: 16, backgroundColor: Colors.white),
+                        ),
                       )
                     ],
                   ),
