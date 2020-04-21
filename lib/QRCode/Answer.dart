@@ -1,5 +1,10 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:feedback_system/public/Metrics/effort_rating.dart';
+import 'package:feedback_system/public/Metrics/goalcompletionrate_meter.dart';
+import 'package:feedback_system/public/Metrics/questionandresponse.dart';
+import 'package:feedback_system/public/Metrics/satisfaction_rating.dart';
+import 'package:feedback_system/public/Metrics/smiley_rating.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -20,6 +25,8 @@ class _AnswerState extends State<Answer> {
   String email;
   List<double> SliderScores;
   List<dynamic> updated;
+  List<QuestionAndResponse> questionObjectList =
+      []; //TODO: This is the set Of QuestionAndResponse Object -- Iterate and search for 'Response' attribute for set oF responses.
 
   instantiate() async {
     await Firestore.instance
@@ -59,10 +66,14 @@ class _AnswerState extends State<Answer> {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
-    if(data == null) return SpinKitThreeBounce(color: Colors.blue);
-    else if(data == 'Error') return stopUser('Feedback no longer exists');
-    else if(data['attended'].contains(email)) return stopUser('Can\'t give feedback more than once');
-    else return fetchDocument(width);
+    if (data == null)
+      return SpinKitThreeBounce(color: Colors.blue);
+    else if (data == 'Error')
+      return stopUser('Feedback no longer exists');
+    else if (data['attended'].contains(email))
+      return stopUser('Can\'t give feedback more than once');
+    else
+      return fetchDocument(width);
   }
 
   stopUser(data) {
@@ -138,18 +149,34 @@ class _AnswerState extends State<Answer> {
   }
 
   goalCompletionRate(int index) {
-    return Text('Goal completion rate');
+    QuestionAndResponse temp =
+        QuestionAndResponse(data['questions'][index], "GoalCompletionRate");
+    questionObjectList.add(temp);
+    return GoalCompletionRateMeter(temp);
   }
 
   effortScore(int index) {
-    return Text('Effort Score');
+    QuestionAndResponse temp =
+        QuestionAndResponse(data['questions'][index], "EffortScore");
+    questionObjectList.add(temp);
+    return EffortRatingMeter(temp);
   }
 
   smiley(int index) {
-    return Text('Smiley');
+    QuestionAndResponse temp =
+        QuestionAndResponse(data['questions'][index], "SmileyRating");
+    questionObjectList.add(temp);
+    return SmileyRatingMeter(temp);
   }
 
   slider(int index) {
+    QuestionAndResponse temp =
+        QuestionAndResponse(data['questions'][index], "Satisfaction");
+    questionObjectList.add(temp);
+    return SatisafactionRatingMeter(temp);
+  }
+
+  _slider(int index) {
     return SliderTheme(
       data: themeData(),
       child: Slider(
