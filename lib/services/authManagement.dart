@@ -29,12 +29,11 @@ class Auth {
         .signInWithEmailAndPassword(email: _email, password: _password)
         .then((user) async {
           getAdmins(_email).then((docs) {
-            if(docs.documents.length > 0) {
-              _prefs.setBool("admin", true);
-            } else {
-              _prefs.setBool("admin", false);
-            }
+            _prefs.setBool('admin', docs.documents.length > 0);
             _prefs.setString("email", _email);
+          });
+          getRoots(_email).then((docs) {
+            _prefs.setBool('root', docs.documents.length > 0);
           });
       FirebaseUser user = await getUser();
       pr.hide();
@@ -62,10 +61,7 @@ class Auth {
     pr.style(message: 'Creating account');
     pr.show();
     FirebaseUser user = (await _firebaseAuth.createUserWithEmailAndPassword(
-            email: email, password: password))
-        .user;
-
-    // Scaffold.of(context).showSnackBar(SnackBar(content: Text('Check your email for verification link'),));
+            email: email, password: password)).user;
 
     await user.sendEmailVerification();
     await Firestore.instance.collection('/users').add({
@@ -76,7 +72,8 @@ class Auth {
     }).then((val) {
       pr.hide();
       _prefs.setString('email', email);
-      _prefs.setBool('isadmin', false);
+      _prefs.setBool('admin', false);
+      _prefs.setBool('root', false);
       Navigator.of(context).pop();
     });
     return user.uid;
@@ -94,8 +91,9 @@ class Auth {
 
   Future<void> signOut() async {
     await FirebaseAuth.instance.signOut().then((value) {
-      _prefs.setBool('isadmin', null);
+      _prefs.setBool('admin', null);
       _prefs.setString('email', null);
+      _prefs.setBool('root', null);
       Navigator.of(context).pop();
       Navigator.of(context)
           .pushNamedAndRemoveUntil('/landingpage', (v) => false);
@@ -109,6 +107,14 @@ class Auth {
         .collection('/users')
         .where('email', isEqualTo: email)
         .where('isadmin', isEqualTo: true)
+        .getDocuments();
+    return docs;
+  }
+
+  getRoots(String email) {
+    var docs = Firestore.instance
+        .collection('/root')
+        .where('email', isEqualTo: email)
         .getDocuments();
     return docs;
   }

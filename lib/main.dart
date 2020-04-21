@@ -52,6 +52,9 @@ class MyApp extends StatelessWidget {
       await auth.getAdmins(email).then((docs) {
         prefs.setBool('admin', docs.documents.length > 0);
       });
+      await auth.getRoots(email).then((docs) {
+        prefs.setBool('root', docs.documents.length > 0);
+      });
     }
   }
 }
