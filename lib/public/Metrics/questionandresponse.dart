@@ -7,7 +7,7 @@ class QuestionAndResponse {
   QuestionAndResponse(this.question, this.metricType) {
     switch (this.metricType) {
       case 'Satisfaction':
-        this.response = 5;
+        this.response = 3;
         break;
       case 'SmileyRating':
         this.response = 3;

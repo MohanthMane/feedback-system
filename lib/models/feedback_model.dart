@@ -43,7 +43,7 @@ class FeedbackModel {
       else if (metric == 'GoalCompletionRate')
         length = 3;
       else
-        length = 10;
+        length = 5;
       List<int> tempList = new List<int>.filled(length, 0,growable: false);
       scores[idx.toString()] = (tempList);
       idx++;

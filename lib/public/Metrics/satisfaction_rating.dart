@@ -23,7 +23,7 @@ class _SatisafactionRatingMeterState extends State<SatisafactionRatingMeter> {
         });
       },
       min: 1.0,
-      max: 10.0,
+      max: 5.0,
     );
   }
 }
