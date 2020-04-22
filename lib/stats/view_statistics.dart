@@ -3,6 +3,8 @@ import 'package:feedback_system/stats/statistics_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
+//import 'package:charts_flutter/flutter.dart';
+
 class Statistics extends StatefulWidget {
   String docId;
 
@@ -29,7 +31,7 @@ class _StatisticsState extends State<Statistics> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Stats'),
+        title: Text("Statistics"),
       ),
       body: FutureBuilder(
         future: setData(),
