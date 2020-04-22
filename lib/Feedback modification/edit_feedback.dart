@@ -1,5 +1,6 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:feedback_system/QRCode/GenerateScreen.dart';
+import 'package:feedback_system/stats/view_statistics.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
@@ -42,7 +43,9 @@ class _EditFeedbackState extends State<EditFeedback> {
             color: Colors.blue,
             child: Text('View statistics'),
             onPressed: () {
-              print('Under development');
+              Navigator.push(context, MaterialPageRoute(
+                builder: (context) => Statistics(widget.feedback.documentID)
+              ));
             },
           ),
         )
