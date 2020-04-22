@@ -23,10 +23,9 @@ class _AnswerState extends State<Answer> {
   bool attended;
   bool perform = false;
   String email;
-  List<double> SliderScores;
-  List<dynamic> updated;
+  var updated;
   List<QuestionAndResponse> questionObjectList =
-      []; //TODO: This is the set Of QuestionAndResponse Object -- Iterate and search for 'Response' attribute for set oF responses.
+      new List<QuestionAndResponse>();
 
   instantiate() async {
     await Firestore.instance
@@ -41,8 +40,6 @@ class _AnswerState extends State<Answer> {
       } else {
         setState(() {
           data = _data;
-          SliderScores = new List<double>.filled(data['questions'].length, 1,
-              growable: false);
         });
       }
     });
@@ -176,44 +173,21 @@ class _AnswerState extends State<Answer> {
     return SatisafactionRatingMeter(temp);
   }
 
-  _slider(int index) {
-    return SliderTheme(
-      data: themeData(),
-      child: Slider(
-        value: SliderScores[index],
-        min: 1,
-        max: 10,
-        divisions: 9,
-        label: SliderScores[index].toString(),
-        onChanged: (_value) {
-          setState(
-            () {
-              SliderScores[index] = _value;
-            },
-          );
-        },
-      ),
-    );
-  }
-
   updateScores() async {
     await Firestore.instance
         .collection('/feedbacks')
         .document(widget.data)
         .get()
         .then((doc) {
-      print(doc['scores']);
-      var prev = List();
-      for (int x = 0; x < doc['scores'].length; x++) prev.add(doc['scores'][x]);
-      int idx = 0;
-      // while (idx < scores.length) {
-      //   prev[idx] += scores[idx];
-      //   idx++;
-      // }
+      var prev = doc['scores'];
+      print(prev);
+      for (int i = 0; i < questionObjectList.length; i++) {
+        int response = questionObjectList[i].response;
+        prev[i.toString()][response - 1] += 1;
+      }
       setState(() {
         updated = prev;
       });
-      print(updated);
     });
   }
 

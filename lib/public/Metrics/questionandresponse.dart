@@ -2,10 +2,10 @@ class QuestionAndResponse {
   //int listIndex;
   String question;
   int response;
-  String MetricType;
+  String metricType;
 
-  QuestionAndResponse(this.question, this.MetricType) {
-    switch (this.MetricType) {
+  QuestionAndResponse(this.question, this.metricType) {
+    switch (this.metricType) {
       case 'Satisfaction':
         this.response = 5;
         break;
