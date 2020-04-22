@@ -6,7 +6,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 //import 'package:charts_flutter/flutter.dart';
 
 class Statistics extends StatefulWidget {
-  String docId;
+  final String docId;
 
   Statistics(this.docId);
 
