@@ -26,6 +26,7 @@ class CrudMethods {
       'questions': feedback.questions,
       'metrics': feedback.metrics,
       'scores': feedback.scores,
+      'average': feedback.averageScores,
       'remarks': feedback.remarks,
       'attended': feedback.attended,
       'status': feedback.status

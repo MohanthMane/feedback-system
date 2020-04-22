@@ -7,6 +7,7 @@ class FeedbackModel {
   List<String> questions, metrics;
   Map<String,List<int>> scores;
   List<String> remarks;
+  List<double> averageScores;
   List<String> attended;
   String type;
   String name, host;
@@ -16,6 +17,7 @@ class FeedbackModel {
   FeedbackModel(questions, type, name, host, hostId) {
     this.questionObjects = questions;
     this.remarks = new List<String>();
+    this.averageScores = new List<double>();
     this.attended = new List<String>();
     this.questions = new List<String>();
     this.metrics = new List<String>();

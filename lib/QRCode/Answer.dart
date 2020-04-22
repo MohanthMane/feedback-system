@@ -20,6 +20,7 @@ class Answer extends StatefulWidget {
 
 class _AnswerState extends State<Answer> {
   var data;
+  double avg = 0;
   bool attended;
   bool perform = false;
   String email;
@@ -184,10 +185,15 @@ class _AnswerState extends State<Answer> {
       for (int i = 0; i < questionObjectList.length; i++) {
         int response = questionObjectList[i].response;
         prev[i.toString()][response - 1] += 1;
+        if(questionObjectList[i].metricType != 'GoalCompletionRate') avg += response;
+        else {
+          if(response == 1) avg += 5;
+          else if(response == 2) avg += 3;
+          else avg += 1;
+        }
       }
-      setState(() {
-        updated = prev;
-      });
+      avg = avg / questionObjectList.length;
+      updated = prev;
     });
   }
 
@@ -197,7 +203,8 @@ class _AnswerState extends State<Answer> {
       await updateScores();
       await tx.update(ref, {
         'scores': updated,
-        'attended': FieldValue.arrayUnion([email])
+        'attended': FieldValue.arrayUnion([email]),
+        'average': FieldValue.arrayUnion([avg]),
       });
     }).then((val) {
       print("updated");
