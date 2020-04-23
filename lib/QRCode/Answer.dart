@@ -7,6 +7,7 @@ import 'package:feedback_system/public/Metrics/satisfaction_rating.dart';
 import 'package:feedback_system/public/Metrics/smiley_rating.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Answer extends StatefulWidget {
@@ -86,11 +87,7 @@ class _AnswerState extends State<Answer> {
       appBar: AppBar(
         title: Text(data['name']),
       ),
-      body: ListView.separated(
-        separatorBuilder: (context, index) => Divider(
-          color: Colors.grey,
-          height: 1,
-        ),
+      body: Swiper(
         itemBuilder: (context, index) {
           return Padding(
             padding: EdgeInsets.fromLTRB(5, 2, 5, 2),
@@ -115,6 +112,8 @@ class _AnswerState extends State<Answer> {
           );
         },
         itemCount: data['questions'].length,
+        pagination: SwiperPagination(),
+        control: SwiperControl(),
       ),
       persistentFooterButtons: <Widget>[
         SizedBox(
