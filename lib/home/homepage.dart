@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:feedback_system/Feedback modification/edit_feedback.dart';
 import 'package:feedback_system/QRCode/scanner.dart';
@@ -64,13 +63,13 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void deactivate() {
-    print('In deactivate');
+    // print('In deactivate');
     super.deactivate();
   }
 
   @override
   void dispose() {
-    print('in dispose');
+    // print('in dispose');
     super.dispose();
   }
 

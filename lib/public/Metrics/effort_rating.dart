@@ -23,7 +23,7 @@ class _EffortRatingMeterState extends State<EffortRatingMeter> {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: <Widget>[
         RadioButtonGroup(
           labels: labels,
