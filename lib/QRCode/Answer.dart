@@ -87,8 +87,25 @@ class _AnswerState extends State<Answer> {
       appBar: AppBar(
         title: Text(data['name']),
       ),
-      body: Swiper(
+      body: ListView.separated(
+        separatorBuilder: (context, index) =>
+            Divider(height: 1.0, color: Colors.grey),
         itemBuilder: (context, index) {
+          if (index == data['questions'].length) {
+            return Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: RaisedButton(
+                color: Color(0xff23272B),
+                child: Text(
+                  'Submit',
+                  style: TextStyle(color: Colors.white),
+                ),
+                onPressed: () async {
+                  uploadFeedback(context);
+                },
+              ),
+            );
+          }
           return Padding(
             padding: EdgeInsets.fromLTRB(5, 2, 5, 2),
             child: Column(
@@ -111,22 +128,8 @@ class _AnswerState extends State<Answer> {
             ),
           );
         },
-        itemCount: data['questions'].length,
-        pagination: SwiperPagination(),
-        control: SwiperControl(),
+        itemCount: data['questions'].length + 1,
       ),
-      persistentFooterButtons: <Widget>[
-        SizedBox(
-          width: width,
-          child: RaisedButton(
-            color: Colors.blue,
-            child: Text('Submit'),
-            onPressed: () async {
-              uploadFeedback(context);
-            },
-          ),
-        )
-      ],
     );
   }
 
@@ -184,11 +187,15 @@ class _AnswerState extends State<Answer> {
       for (int i = 0; i < questionObjectList.length; i++) {
         int response = questionObjectList[i].response;
         prev[i.toString()][response - 1] += 1;
-        if(questionObjectList[i].metricType != 'GoalCompletionRate') avg += response;
+        if (questionObjectList[i].metricType != 'GoalCompletionRate')
+          avg += response;
         else {
-          if(response == 1) avg += 5;
-          else if(response == 2) avg += 3;
-          else avg += 1;
+          if (response == 1)
+            avg += 5;
+          else if (response == 2)
+            avg += 3;
+          else
+            avg += 1;
         }
       }
       avg = avg / questionObjectList.length;
@@ -206,7 +213,7 @@ class _AnswerState extends State<Answer> {
         'average': FieldValue.arrayUnion([avg]),
       });
     }).then((val) {
-      print("updated");
+      // print("updated");
       AwesomeDialog(
           context: context,
           dialogType: DialogType.SUCCES,
@@ -220,26 +227,5 @@ class _AnswerState extends State<Answer> {
                 .pushNamedAndRemoveUntil('/homepage', (r) => false);
           }).show();
     });
-  }
-
-  themeData() {
-    return SliderTheme.of(context).copyWith(
-      activeTrackColor: Colors.red[700],
-      inactiveTrackColor: Colors.red[100],
-      trackShape: RoundedRectSliderTrackShape(),
-      trackHeight: 3.0,
-      thumbShape: RoundSliderThumbShape(enabledThumbRadius: 8.0),
-      thumbColor: Colors.redAccent,
-      overlayColor: Colors.red.withAlpha(32),
-      overlayShape: RoundSliderOverlayShape(overlayRadius: 15.0),
-      tickMarkShape: RoundSliderTickMarkShape(),
-      activeTickMarkColor: Colors.red[700],
-      inactiveTickMarkColor: Colors.red[100],
-      valueIndicatorShape: PaddleSliderValueIndicatorShape(),
-      valueIndicatorColor: Colors.redAccent,
-      valueIndicatorTextStyle: TextStyle(
-        color: Colors.white,
-      ),
-    );
   }
 }
