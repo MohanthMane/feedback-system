@@ -68,7 +68,6 @@ class _ScannerState extends State<Scanner> {
                         signed: false, decimal: false),
                     decoration: InputDecoration(
                       hintText: 'Enter the code below',
-                      labelText: 'Issue with scanning?',
                     ),
                     onChanged: (value) {
                       feedbackId = value;

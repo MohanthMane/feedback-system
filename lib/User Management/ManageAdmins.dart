@@ -15,6 +15,7 @@ class _ManageAdminsState extends State<ManageAdmins> {
   bool isRoot;
   bool isAdmin;
   String query = '';
+  String newAdminEmail;
   Widget appBarContent = new Text('Manage admins');
   Icon appBarIcon = Icon(Icons.search);
 
@@ -74,7 +75,66 @@ class _ManageAdminsState extends State<ManageAdmins> {
           }
         },
       ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+        onPressed: () {
+          if (isAdmin || isRoot) {
+            showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    content: TextField(
+                      decoration: InputDecoration(hintText: 'Enter user email'),
+                      keyboardType: TextInputType.emailAddress,
+                      onChanged: (value) => (newAdminEmail = value),
+                    ),
+                    title: Text('Add user'),
+                    actions: <Widget>[
+                      FlatButton(
+                        child: Text('Add'),
+                        onPressed: () async {
+                          await createNewAdmin();
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      FlatButton(
+                        child: Text('Cancel'),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      )
+                    ],
+                  );
+                });
+          } else {
+            Fluttertoast.showToast(msg: 'Permission Denied☹️');
+          }
+        },
+      ),
     );
+  }
+
+  createNewAdmin() async {
+    var userDocs = await Firestore.instance
+        .collection('/users')
+        .where('email', isEqualTo: newAdminEmail)
+        .getDocuments();
+
+    if (userDocs.documents.length == 0) {
+      Fluttertoast.showToast(msg: 'User doesn\'t exist');
+      return;
+    } else {
+      userDocs.documents.forEach((d) async {
+        await Firestore.instance
+            .collection('/users')
+            .document(d.documentID)
+            .updateData({'isadmin': true}).then((val) {
+              Fluttertoast.showToast(msg: 'Successfully added');
+        }).catchError((e) {
+          print(e);
+        });
+      });
+    }
   }
 
   searchBar() {
@@ -102,7 +162,8 @@ class _ManageAdminsState extends State<ManageAdmins> {
             itemCount: snapshot.data.documents.length,
             itemBuilder: (context, index) {
               DocumentSnapshot userData = snapshot.data.documents[index];
-              if (query == '' || userData.data['name']
+              if (query == '' ||
+                  userData.data['name']
                       .toLowerCase()
                       .contains(query.toLowerCase()) ||
                   userData.data['email']

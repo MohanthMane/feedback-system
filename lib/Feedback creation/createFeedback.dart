@@ -33,22 +33,6 @@ class QuestionDialog extends StatefulWidget {
 class _QuestionDialogState extends State<QuestionDialog> {
   // MetricType _metricType = widget.question.metricType;
   MetricType _metricType = MetricType.SmileyRating;
-
-  /*
-
-  onChanged: (text) {
-                      widget.question.questionData = text;
-                    },
-
-                    onPressed: () async {
-                        if (widget.question.questionData.length != 0) {
-                          widget.question.metricType = _metricType;
-                          Navigator.pop(context, widget.question);
-                        }
-                      },
-
-   */
-
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width - 40;
