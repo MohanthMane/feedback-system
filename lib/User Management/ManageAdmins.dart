@@ -16,7 +16,9 @@ class _ManageAdminsState extends State<ManageAdmins> {
   bool isAdmin;
   String query = '';
   Widget appBarContent = new Text('Manage admins');
+  List<dynamic> _list = List<dynamic>();
   Icon appBarIcon = Icon(Icons.search);
+  final myController = TextEditingController();
 
   @override
   void initState() {
@@ -35,33 +37,35 @@ class _ManageAdminsState extends State<ManageAdmins> {
   }
 
   searchPressed() {
-    setState(() {
-      if (this.appBarIcon.icon == Icons.search) {
-        this.appBarIcon = Icon(Icons.close);
-        this.appBarContent = TextField(
-          decoration: InputDecoration(hintText: 'Search admins'),
-          onChanged: (value) {
-            setState(() {
-              query = value;
-            });
-          },
-        );
-      } else {
-        this.appBarIcon = Icon(Icons.search);
-        this.appBarContent = new Text('Manage admins');
-        query = '';
-      }
-    });
+    if (this.appBarIcon.icon == Icons.search) {
+      this.appBarIcon = Icon(Icons.close);
+      this.appBarContent = TextField(
+        controller: myController,
+        decoration: InputDecoration(hintText: 'Search admins'),
+        onChanged: (value) {
+          setState(() {
+            query = value;
+            print("SearchBar :" + query);
+          });
+        },
+      );
+    } else {
+      this.appBarIcon = Icon(Icons.search);
+      this.appBarContent = new Text('Manage admins');
+      query = '';
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: FlatButton(
-          child: appBarIcon,
-          onPressed: searchPressed,
-        ),
+        actions: <Widget>[
+          IconButton(
+            icon: appBarIcon,
+            onPressed: searchPressed,
+          ),
+        ],
         title: appBarContent,
       ),
       body: FutureBuilder(
@@ -77,55 +81,49 @@ class _ManageAdminsState extends State<ManageAdmins> {
     );
   }
 
-  searchBar() {
-    return TextField(
-      decoration: InputDecoration(
-        hintText: 'Search list of admins',
-      ),
-      onChanged: (value) {
-        query = value;
-      },
-    );
-  }
-
   listWidget() {
     return StreamBuilder(
       stream: Firestore.instance
           .collection('/users')
           .where('isadmin', isEqualTo: true)
           .snapshots(),
-      builder: (context, snapshot) {
+      builder: (BuildContext context, snapshot) {
         if (snapshot.hasData) {
+          var temp = snapshot.data.documents;
+          _list.clear();
+          for (DocumentSnapshot userData in temp) {
+            if (query == '' ||
+                userData.data['name']
+                    .toLowerCase()
+                    .contains(query.toLowerCase()) ||
+                userData.data['email']
+                    .toLowerCase()
+                    .contains(query.toLowerCase())) {
+              _list.add(userData);
+            }
+          }
           return ListView.separated(
             separatorBuilder: (context, index) =>
                 Divider(height: 1.0, color: Colors.grey),
-            itemCount: snapshot.data.documents.length,
+            itemCount: _list.length,
             itemBuilder: (context, index) {
-              DocumentSnapshot userData = snapshot.data.documents[index];
-              if (query == '' || userData.data['name']
-                      .toLowerCase()
-                      .contains(query.toLowerCase()) ||
-                  userData.data['email']
-                      .toLowerCase()
-                      .contains(query.toLowerCase())) {
-                return ListTile(
-                    title: Text(userData.data['name']),
-                    subtitle: Text(userData.data['email']),
-                    trailing: FlatButton(
-                      child: Icon(
-                        MdiIcons.minusCircleOutline,
-                        color: Colors.red,
-                      ),
-                      onPressed: () async {
-                        ProgressDialog pr = new ProgressDialog(context);
-                        pr.style(message: 'Processing request');
-                        pr.show();
-                        await removeUser(userData);
-                        pr.hide();
-                      },
-                    ));
-              } else
-                return null;
+              return ListTile(
+                title: Text(_list[index].data['name']),
+                subtitle: Text(_list[index].data['email']),
+                trailing: IconButton(
+                  icon: Icon(
+                    MdiIcons.minusCircleOutline,
+                    color: Colors.red,
+                  ),
+                  onPressed: () async {
+                    ProgressDialog pr = new ProgressDialog(context);
+                    pr.style(message: 'Processing request');
+                    pr.show();
+                    await removeUser(_list[index]);
+                    pr.hide();
+                  },
+                ),
+              );
             },
           );
         } else if (snapshot.connectionState == ConnectionState.done &&
