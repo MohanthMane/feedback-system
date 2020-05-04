@@ -11,6 +11,7 @@ import 'package:flutter/rendering.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 enum MetricType { Satisfaction, GoalCompletionRate, EffortScore, SmileyRating }
+
 const kActiveCardColor = Colors.black12;
 const kInactiveCardColor = Colors.white;
 
@@ -32,8 +33,25 @@ class QuestionDialog extends StatefulWidget {
 class _QuestionDialogState extends State<QuestionDialog> {
   // MetricType _metricType = widget.question.metricType;
   MetricType _metricType = MetricType.SmileyRating;
+
+  /*
+
+  onChanged: (text) {
+                      widget.question.questionData = text;
+                    },
+
+                    onPressed: () async {
+                        if (widget.question.questionData.length != 0) {
+                          widget.question.metricType = _metricType;
+                          Navigator.pop(context, widget.question);
+                        }
+                      },
+
+   */
+
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width - 40;
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.questionAction),
@@ -41,15 +59,34 @@ class _QuestionDialogState extends State<QuestionDialog> {
       body: SingleChildScrollView(
         padding: EdgeInsets.all(15),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            TextFormField(
-              initialValue: widget.question.questionData,
-              decoration: InputDecoration(hintText: 'Question'),
-              onChanged: (text) {
-                widget.question.questionData = text;
-              },
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                SizedBox(
+                    width: (width * 4) / 5,
+                    child: TextField(
+                      controller: TextEditingController()..text =  widget.question.questionData,
+                      decoration: InputDecoration(hintText: 'Question'),
+                      onChanged: (text) {
+                        widget.question.questionData = text;
+                      },
+                    )),
+                SizedBox(width: 5),
+                SizedBox(
+                    width: (width / 5),
+                    child: RaisedButton(
+                      child: Text('ADD', style: TextStyle(color: Colors.white)),
+                      color: Colors.blue,
+                      onPressed: () async {
+                        if (widget.question.questionData.length != 0) {
+                          widget.question.metricType = _metricType;
+                          Navigator.pop(context, widget.question);
+                        }
+                      },
+                    ))
+              ],
             ),
             Container(
               height: 25,
@@ -120,23 +157,6 @@ class _QuestionDialogState extends State<QuestionDialog> {
                     QuestionAndResponse("Satisfaction", "Satisfaction")),
               ),
             ),
-            Container(
-              height: 10,
-            ),
-            FlatButton(
-              color: Colors.blue,
-              child: Text(
-                'ADD',
-                style: TextStyle(color: Colors.white),
-              ),
-              onPressed: () async {
-                if (widget.question.questionData.length != 0) {
-                  widget.question.metricType = _metricType;
-                  //print(widget.question);
-                  Navigator.pop(context, widget.question);
-                }
-              },
-            )
           ],
         ),
       ),

@@ -47,13 +47,15 @@ class _LoginPageState extends State<LoginPage> {
         title: Text('Login'),
         centerTitle: true,
       ),
-      body: Container(
-        margin: EdgeInsets.all(15),
-        child: Form(
-          key: formkey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: loginForm(),
+      body: SingleChildScrollView(
+        child: Container(
+          margin: EdgeInsets.all(15),
+          child: Form(
+            key: formkey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: loginForm(),
+            ),
           ),
         ),
       ),

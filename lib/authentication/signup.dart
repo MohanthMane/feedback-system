@@ -43,13 +43,15 @@ class _SignUpState extends State<SignUp> {
       appBar: AppBar(
         title: Text('Sign Up'),
       ),
-      body: Container(
-        margin: EdgeInsets.all(15),
-        child: Form(
-          key: formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: registerForm(),
+      body: SingleChildScrollView(
+        child: Container(
+          margin: EdgeInsets.all(15),
+          child: Form(
+            key: formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: registerForm(),
+            ),
           ),
         ),
       ),
