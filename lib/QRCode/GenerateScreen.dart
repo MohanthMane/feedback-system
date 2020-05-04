@@ -155,7 +155,7 @@ class GenerateScreenState extends State<GenerateScreen> {
               child: RepaintBoundary(
                 key: globalKey,
                 child: SizedBox(
-                  height: 0.6 * bodyHeight,
+                  height: bodyHeight,
                   child: Column(
                     children: <Widget>[
                       Align(
