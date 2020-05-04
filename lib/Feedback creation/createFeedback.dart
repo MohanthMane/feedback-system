@@ -1,14 +1,22 @@
 import 'package:feedback_system/Feedback%20creation/crud.dart';
 import 'package:feedback_system/models/feedback_model.dart';
+import 'package:feedback_system/public/Metrics/effort_rating.dart';
+import 'package:feedback_system/public/Metrics/goalcompletionrate_meter.dart';
+import 'package:feedback_system/public/Metrics/questionandresponse.dart';
+import 'package:feedback_system/public/Metrics/satisfaction_rating.dart';
+import 'package:feedback_system/public/Metrics/smiley_rating.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 enum MetricType { Satisfaction, GoalCompletionRate, EffortScore, SmileyRating }
+const kActiveCardColor = Colors.black12;
+const kInactiveCardColor = Colors.white;
 
 class Question {
   String questionData = "";
-  MetricType metricType = MetricType.GoalCompletionRate;
+  MetricType metricType = MetricType.SmileyRating;
 }
 
 class QuestionDialog extends StatefulWidget {
@@ -23,90 +31,113 @@ class QuestionDialog extends StatefulWidget {
 
 class _QuestionDialogState extends State<QuestionDialog> {
   // MetricType _metricType = widget.question.metricType;
-  MetricType _metricType = MetricType.GoalCompletionRate;
+  MetricType _metricType = MetricType.SmileyRating;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.questionAction),
       ),
-      body: Container(
-        margin: EdgeInsets.all(15),
-        color: Colors.white,
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              TextFormField(
-                initialValue: widget.question.questionData,
-                decoration: InputDecoration(hintText: 'Question'),
-                onChanged: (text) {
-                  widget.question.questionData = text;
-                },
+      body: SingleChildScrollView(
+        padding: EdgeInsets.all(15),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            TextFormField(
+              initialValue: widget.question.questionData,
+              decoration: InputDecoration(hintText: 'Question'),
+              onChanged: (text) {
+                widget.question.questionData = text;
+              },
+            ),
+            Container(
+              height: 25,
+            ),
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  _metricType = MetricType.EffortScore;
+                });
+              },
+              child: Container(
+                margin: EdgeInsets.all(10),
+                padding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 25.0),
+                color: _metricType == MetricType.EffortScore
+                    ? kActiveCardColor
+                    : kInactiveCardColor,
+                child: EffortRatingMeter(
+                    QuestionAndResponse("EffortScore", "EffortScore")),
               ),
-              Radio(
-                value: MetricType.EffortScore,
-                groupValue: _metricType,
-                onChanged: (MetricType value) {
-                  setState(() {
-                    print(value);
-                    _metricType = value;
-                  });
-                },
+            ),
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  _metricType = MetricType.SmileyRating;
+                });
+              },
+              child: Container(
+                margin: EdgeInsets.all(10),
+                padding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 25.0),
+                color: _metricType == MetricType.SmileyRating
+                    ? kActiveCardColor
+                    : kInactiveCardColor,
+                child: SmileyRatingMeter(
+                    QuestionAndResponse("SmileyRating", "SmileyRating")),
               ),
-              Image.asset("assets/effort.png"),
-              Radio(
-                value: MetricType.SmileyRating,
-                groupValue: _metricType,
-                onChanged: (MetricType value) {
-                  setState(() {
-                    print(value);
-                    _metricType = value;
-                  });
-                },
-              ),
-              Image.asset("assets/smiley.png"),
-              Radio(
-                value: MetricType.GoalCompletionRate,
-                groupValue: _metricType,
-                onChanged: (MetricType value) {
-                  print(value);
-                  setState(() {
-                    _metricType = value;
-                  });
-                },
-              ),
-              Image.asset("assets/goalcompletion.png"),
-              Radio(
-                value: MetricType.Satisfaction,
-                groupValue: _metricType,
-                onChanged: (MetricType value) {
-                  print(value);
-                  setState(() {
-                    _metricType = value;
-                  });
-                },
-              ),
-              Image.asset("assets/satisfaction.png"),
-              Container(
-                height: 50,
-              ),
-              FlatButton(
-                color: Colors.blue,
-                child: Text(
-                  'ADD',
-                  style: TextStyle(color: Colors.white),
+            ),
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  _metricType = MetricType.GoalCompletionRate;
+                });
+              },
+              child: Container(
+                margin: EdgeInsets.all(10),
+                padding: EdgeInsets.all(50),
+                color: _metricType == MetricType.GoalCompletionRate
+                    ? kActiveCardColor
+                    : kInactiveCardColor,
+                child: Center(
+                  child: GoalCompletionRateMeter(QuestionAndResponse(
+                      "GoalCompletionRate", "GoalCompletionRate")),
                 ),
-                onPressed: () async {
-                  if (widget.question.questionData.length != 0) {
-                    widget.question.metricType = _metricType;
-                    //print(widget.question);
-                    Navigator.pop(context, widget.question);
-                  }
-                },
-              )
-            ],
-          ),
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  _metricType = MetricType.Satisfaction;
+                });
+              },
+              child: Container(
+                margin: EdgeInsets.all(10),
+                padding: EdgeInsets.all(50),
+                color: _metricType == MetricType.Satisfaction
+                    ? kActiveCardColor
+                    : kInactiveCardColor,
+                child: SatisafactionRatingMeter(
+                    QuestionAndResponse("Satisfaction", "Satisfaction")),
+              ),
+            ),
+            Container(
+              height: 10,
+            ),
+            FlatButton(
+              color: Colors.blue,
+              child: Text(
+                'ADD',
+                style: TextStyle(color: Colors.white),
+              ),
+              onPressed: () async {
+                if (widget.question.questionData.length != 0) {
+                  widget.question.metricType = _metricType;
+                  //print(widget.question);
+                  Navigator.pop(context, widget.question);
+                }
+              },
+            )
+          ],
         ),
       ),
     );
@@ -218,7 +249,9 @@ class _CreateFeedbackState extends State<CreateFeedback> {
       color: Colors.red,
       child: Align(
         child: Row(
-          mainAxisAlignment: ((position == 'end') ? MainAxisAlignment.end : MainAxisAlignment.start),
+          mainAxisAlignment: ((position == 'end')
+              ? MainAxisAlignment.end
+              : MainAxisAlignment.start),
           children: <Widget>[
             Icon(
               CupertinoIcons.delete,
@@ -231,14 +264,17 @@ class _CreateFeedbackState extends State<CreateFeedback> {
                 color: Colors.white,
                 fontWeight: FontWeight.w700,
               ),
-              textAlign: ((position == 'end') ? TextAlign.right : TextAlign.left),
+              textAlign:
+                  ((position == 'end') ? TextAlign.right : TextAlign.left),
             ),
             SizedBox(
               width: 20,
             ),
           ],
         ),
-        alignment: ((position == 'end') ? Alignment.centerRight : Alignment.centerLeft),
+        alignment: ((position == 'end')
+            ? Alignment.centerRight
+            : Alignment.centerLeft),
       ),
     );
   }

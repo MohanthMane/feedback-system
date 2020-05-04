@@ -1,9 +1,9 @@
+import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:feedback_system/stats/individual_stats.dart';
 import 'package:feedback_system/stats/statistics_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:charts_flutter/flutter.dart' as charts;
 
 class Statistics extends StatefulWidget {
   final String docId;
@@ -40,6 +40,7 @@ class _StatisticsState extends State<Statistics> {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             return ListView.separated(
+              shrinkWrap: true,
               separatorBuilder: (context, index) =>
                   Divider(height: 1.0, color: Colors.grey),
               itemCount: _data['questions'].length,
@@ -51,7 +52,7 @@ class _StatisticsState extends State<Statistics> {
                     SizedBox(
                       width: width,
                       height: height,
-                                          child: IndividualCharts(
+                      child: IndividualCharts(
                           scoresToStatList(stats.getScoresForIndex(index),
                               _data['metrics'][index]),
                           true),

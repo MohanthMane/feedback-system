@@ -23,6 +23,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      //theme: ThemeData.dark().copyWith(backgroundColor: Colors.black12),
       debugShowCheckedModeBanner: false,
       home: SplashScreen.navigate(
         name: 'assets/SplashScreen.flr',
