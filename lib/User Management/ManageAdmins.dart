@@ -14,6 +14,9 @@ class ManageAdmins extends StatefulWidget {
 class _ManageAdminsState extends State<ManageAdmins> {
   bool isRoot;
   bool isAdmin;
+  String query = '';
+  Widget appBarContent = new Text('Manage admins');
+  Icon appBarIcon = Icon(Icons.search);
 
   @override
   void initState() {
@@ -31,11 +34,35 @@ class _ManageAdminsState extends State<ManageAdmins> {
     return isRoot;
   }
 
+  searchPressed() {
+    setState(() {
+      if (this.appBarIcon.icon == Icons.search) {
+        this.appBarIcon = Icon(Icons.close);
+        this.appBarContent = TextField(
+          decoration: InputDecoration(hintText: 'Search admins'),
+          onChanged: (value) {
+            setState(() {
+              query = value;
+            });
+          },
+        );
+      } else {
+        this.appBarIcon = Icon(Icons.search);
+        this.appBarContent = new Text('Manage admins');
+        query = '';
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Admins'),
+        leading: FlatButton(
+          child: appBarIcon,
+          onPressed: searchPressed,
+        ),
+        title: appBarContent,
       ),
       body: FutureBuilder(
         future: getUserData(),
@@ -47,6 +74,17 @@ class _ManageAdminsState extends State<ManageAdmins> {
           }
         },
       ),
+    );
+  }
+
+  searchBar() {
+    return TextField(
+      decoration: InputDecoration(
+        hintText: 'Search list of admins',
+      ),
+      onChanged: (value) {
+        query = value;
+      },
     );
   }
 
@@ -64,22 +102,30 @@ class _ManageAdminsState extends State<ManageAdmins> {
             itemCount: snapshot.data.documents.length,
             itemBuilder: (context, index) {
               DocumentSnapshot userData = snapshot.data.documents[index];
-              return ListTile(
-                  title: Text(userData.data['name']),
-                  subtitle: Text(userData.data['email']),
-                  trailing: FlatButton(
-                    child: Icon(
-                      MdiIcons.minusCircleOutline,
-                      color: Colors.red,
-                    ),
-                    onPressed: () async {
-                      ProgressDialog pr = new ProgressDialog(context);
-                      pr.style(message: 'Processing request');
-                      pr.show();
-                      await removeUser(userData);
-                      pr.hide();
-                    },
-                  ));
+              if (query == '' || userData.data['name']
+                      .toLowerCase()
+                      .contains(query.toLowerCase()) ||
+                  userData.data['email']
+                      .toLowerCase()
+                      .contains(query.toLowerCase())) {
+                return ListTile(
+                    title: Text(userData.data['name']),
+                    subtitle: Text(userData.data['email']),
+                    trailing: FlatButton(
+                      child: Icon(
+                        MdiIcons.minusCircleOutline,
+                        color: Colors.red,
+                      ),
+                      onPressed: () async {
+                        ProgressDialog pr = new ProgressDialog(context);
+                        pr.style(message: 'Processing request');
+                        pr.show();
+                        await removeUser(userData);
+                        pr.hide();
+                      },
+                    ));
+              } else
+                return null;
             },
           );
         } else if (snapshot.connectionState == ConnectionState.done &&
