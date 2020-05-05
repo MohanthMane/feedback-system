@@ -1,4 +1,5 @@
 import 'package:feedback_system/User%20Management/ManageAdmins.dart';
+import 'package:feedback_system/User%20Management/ManageRoot.dart';
 import 'package:feedback_system/services/authManagement.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -37,6 +38,13 @@ class HamBurger {
         onTap: () {
           Navigator.of(context).pop();
           Navigator.push(context, MaterialPageRoute(builder: (context) => ManageAdmins()));
+        },
+      ),
+      ListTile(
+        title: Text('Department managers'),
+        onTap: () {
+          Navigator.of(context).pop();
+          Navigator.push(context, MaterialPageRoute(builder: (context) => ManageRoot()));
         },
       ),
       ListTile(

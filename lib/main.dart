@@ -1,5 +1,6 @@
 import 'package:feedback_system/Feedback%20creation/namingFeedback.dart';
 import 'package:feedback_system/Previous%20feedbacks/closedFeedbacks.dart';
+import 'package:feedback_system/User%20Management/AddManager.dart';
 import 'package:feedback_system/authentication/signup.dart';
 import 'package:feedback_system/services/authManagement.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -23,7 +24,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      //theme: ThemeData.dark().copyWith(backgroundColor: Colors.black12),
+      // theme: ThemeData.dark().copyWith(backgroundColor: Colors.black12),
       debugShowCheckedModeBanner: false,
       home: SplashScreen.navigate(
         name: 'assets/SplashScreen.flr',
@@ -35,6 +36,7 @@ class MyApp extends StatelessWidget {
         backgroundColor: Colors.white,
       ),
       routes: <String, WidgetBuilder>{
+        '/addManager':(BuildContext context) => new AddManager(),
         '/signup': (BuildContext context) => new SignUp(),
         '/nameFeedback': (BuildContext context) => new NamingFeedback(),
         '/landingpage': (BuildContext context) => new LoginPage(),
