@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class HamBurger {
   Auth auth;
+  bool isAdmin;
   SharedPreferences _prefs;
 
   List<Widget> menu(BuildContext context) {
@@ -17,7 +18,7 @@ class HamBurger {
         title: Text('Create feedback'),
         onTap: () async {
           _prefs = await SharedPreferences.getInstance();
-          bool isAdmin = _prefs.getBool("admin");
+          isAdmin = _prefs.getBool("admin");
           if (isAdmin) {
             Navigator.of(context).pop();
             Navigator.of(context).pushNamed('/nameFeedback');
@@ -27,10 +28,23 @@ class HamBurger {
         },
       ),
       ListTile(
-        title: Text('Open feedbacks'),
+        title: Text('Closed feedbacks'),
         onTap: () {
           Navigator.of(context).pop();
           Navigator.of(context).pushNamed('/closedFeedback');
+        },
+      ),
+      ListTile(
+        title: Text('All feedbacks'),
+        onTap: () async {
+          _prefs = await SharedPreferences.getInstance();
+          bool isroot = _prefs.getBool("root");
+          if(isroot) {
+            Navigator.of(context).pop();
+            Navigator.of(context).pushNamed('/allFeedbacks');
+          } else {
+            Fluttertoast.showToast(msg: 'This page is only for managers');
+          }
         },
       ),
       ListTile(

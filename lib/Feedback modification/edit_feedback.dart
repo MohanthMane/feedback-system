@@ -1,5 +1,6 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:feedback_system/QRCode/GenerateScreen.dart';
+import 'package:feedback_system/stats/normal_stats.dart';
 import 'package:feedback_system/stats/view_statistics.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -9,8 +10,9 @@ import 'package:progress_dialog/progress_dialog.dart';
 
 class EditFeedback extends StatefulWidget {
   final DocumentSnapshot feedback;
+  final bool isRoot;
 
-  EditFeedback({this.feedback});
+  EditFeedback({this.feedback, this.isRoot});
 
   @override
   _EditFeedbackState createState() => _EditFeedbackState();
@@ -43,9 +45,15 @@ class _EditFeedbackState extends State<EditFeedback> {
             color: Colors.blue,
             child: Text('View statistics'),
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(
-                builder: (context) => Statistics(widget.feedback.documentID)
-              ));
+              if(widget.isRoot) {
+                Navigator.push(context, MaterialPageRoute(
+                  builder: (context) => Statistics(widget.feedback.documentID)
+                ));
+              } else {
+                Navigator.push(context, MaterialPageRoute(
+                  builder: (context) => NormalStats(widget.feedback.documentID)
+                ));
+              }
             },
           ),
         )

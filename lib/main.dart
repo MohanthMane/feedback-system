@@ -2,6 +2,7 @@ import 'package:feedback_system/Feedback%20creation/namingFeedback.dart';
 import 'package:feedback_system/Previous%20feedbacks/closedFeedbacks.dart';
 import 'package:feedback_system/User%20Management/AddManager.dart';
 import 'package:feedback_system/authentication/signup.dart';
+import 'package:feedback_system/home/AllFeedbacks.dart';
 import 'package:feedback_system/services/authManagement.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flare_splash_screen/flare_splash_screen.dart';
@@ -36,6 +37,7 @@ class MyApp extends StatelessWidget {
         backgroundColor: Colors.white,
       ),
       routes: <String, WidgetBuilder>{
+        '/allFeedbacks': (BuildContext context) => new AllFeedbacks(),
         '/addManager':(BuildContext context) => new AddManager(),
         '/signup': (BuildContext context) => new SignUp(),
         '/nameFeedback': (BuildContext context) => new NamingFeedback(),

@@ -22,9 +22,10 @@ class _HomePageState extends State<HomePage> {
   HamBurger hamBurger = new HamBurger();
   int section;
   Auth auth;
-  bool isAdmin;
+  bool isAdmin, isRoot;
   String email;
   String qrText;
+  List departments;
   bool _statusStorage;
   Stream<QuerySnapshot> feedbacks;
 
@@ -79,13 +80,14 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       email = _prefs.getString('email');
       isAdmin = _prefs.getBool('admin');
+      isRoot = _prefs.getBool('root');
     });
 
     return isAdmin;
   }
 
   requestCamera() async {
-    if(Platform.isAndroid) {
+    if (Platform.isAndroid) {
       await Permission.camera.isUndetermined.then((status) async {
         await Permission.camera.request();
       });
@@ -116,7 +118,6 @@ class _HomePageState extends State<HomePage> {
         future: getUserData(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            if (isAdmin) return adminContent();
             return userContent();
           } else {
             return loading();
@@ -143,7 +144,7 @@ class _HomePageState extends State<HomePage> {
     ));
   }
 
-  adminContent() {
+  userContent() {
     return StreamBuilder(
       stream: Firestore.instance
           .collection('/feedbacks')
@@ -152,6 +153,11 @@ class _HomePageState extends State<HomePage> {
           .snapshots(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
+          if (snapshot.data.documents.length == 0) {
+            return Center(
+              child: Text('No active feedbacks'),
+            );
+          }
           return ListView.separated(
             separatorBuilder: (context, index) =>
                 Divider(height: 1.0, color: Colors.grey),
@@ -167,8 +173,8 @@ class _HomePageState extends State<HomePage> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) =>
-                              EditFeedback(feedback: feedback)));
+                          builder: (context) => EditFeedback(
+                              feedback: feedback, isRoot: isRoot)));
                 },
               );
             },
@@ -183,9 +189,67 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  userContent() {
-    return Center(
-      child: Text('Welcome $email'),
+  fetchDepartments() async {
+    var docs = await Firestore.instance
+        .collection('/root')
+        .where('email', isEqualTo: email)
+        .getDocuments();
+
+    departments = docs.documents[0].data['departments'];
+    return true;
+  }
+
+  rootContent() {
+    return FutureBuilder(
+      future: fetchDepartments(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return StreamBuilder(
+            stream: Firestore.instance
+                .collection('/feedbacks')
+                .where('status', isEqualTo: 'open')
+                .where('type', whereIn: departments)
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                if (snapshot.data.documents.length == 0) {
+                  return Center(
+                    child: Text('No active feedbacks'),
+                  );
+                }
+                return ListView.separated(
+                  separatorBuilder: (context, index) =>
+                      Divider(height: 1.0, color: Colors.grey),
+                  itemCount: snapshot.data.documents.length,
+                  itemBuilder: (context, index) {
+                    DocumentSnapshot feedback = snapshot.data.documents[index];
+
+                    return ListTile(
+                      title: Text(feedback.data['name']),
+                      subtitle: Text('Host : ' + feedback.data['host']),
+                      trailing: Text(feedback.data['type'] ?? ""),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => EditFeedback(
+                                    feedback: feedback, isRoot: isRoot)));
+                      },
+                    );
+                  },
+                );
+              } else if (snapshot.connectionState == ConnectionState.done &&
+                  !snapshot.hasData) {
+                return Center(child: Text('No active feedbacks'));
+              } else {
+                return loading();
+              }
+            },
+          );
+        } else {
+          return loading();
+        }
+      },
     );
   }
 }
