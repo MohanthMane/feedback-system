@@ -1,5 +1,4 @@
-import 'package:feedback_system/User%20Management/ManageAdmins.dart';
-import 'package:feedback_system/User%20Management/ManageRoot.dart';
+import 'package:feedback_system/User Management/ManageAdmins.dart';
 import 'package:feedback_system/services/authManagement.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';

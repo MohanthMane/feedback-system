@@ -7,6 +7,7 @@ import 'package:feedback_system/public/Metrics/satisfaction_rating.dart';
 import 'package:feedback_system/public/Metrics/smiley_rating.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Answer extends StatefulWidget {
@@ -175,60 +176,27 @@ class _AnswerState extends State<Answer> {
     return SatisafactionRatingMeter(temp);
   }
 
-  updateScores() async {
-    await Firestore.instance
-        .collection('/feedbacks')
-        .document(widget.data)
-        .get()
-        .then((doc) {
-      var prev = doc['scores'];
-      attended = doc['attended'];
-      attended.add(email);
-      print(prev);
-      print(questionObjectList.length);
-      for (int i = 0; i < questionObjectList.length; i++) {
-        int response = questionObjectList[i].response;
-        prev[i.toString()][response - 1] += 1;
-        if (questionObjectList[i].metricType != 'GoalCompletionRate')
-          avg += response;
-        else {
-          if (response == 1)
-            avg += 5;
-          else if (response == 2)
-            avg += 3;
-          else
-            avg += 1;
-        }
-      }
-      avg = avg / questionObjectList.length;
-      updated = prev;
-      print(updated);
-    });
-  }
-
   uploadFeedback(context) {
     var ref = Firestore.instance.collection('/feedbacks').document(widget.data);
     Firestore.instance.runTransaction((tx) async {
-      await updateScores();
-      await tx.set(ref, {
+      await ref.get().then((doc) {
+        var prev = doc['scores'];
+        attended = doc['attended'];
+        attended.add(email);
+        for (int i = 0; i < questionObjectList.length; i++) {
+          int response = questionObjectList[i].response;
+          prev[i.toString()][response - 1] += 1;
+        }
+        updated = prev;
+      });
+      await tx.update(ref, {
         'scores': updated,
         'attended': attended,
-//        'average': FieldValue.arrayUnion([avg]),
       });
     }).then((val) {
-      // print("updated");
-      AwesomeDialog(
-          context: context,
-          dialogType: DialogType.SUCCES,
-          animType: AnimType.BOTTOMSLIDE,
-          tittle: 'Success',
-          desc: 'Feedback submitted successfully',
-          dismissOnTouchOutside: false,
-          btnOkOnPress: () {
-            Navigator.of(context, rootNavigator: false).pop();
-            Navigator.of(context)
-                .pushNamedAndRemoveUntil('/homepage', (r) => false);
-          }).show();
+      Fluttertoast.showToast(msg: 'Feedback submitted succesfully');
+      Navigator.of(context, rootNavigator: false).pop();
+      Navigator.of(context).pushNamedAndRemoveUntil('/homepage', (r) => false);
     });
   }
 }
