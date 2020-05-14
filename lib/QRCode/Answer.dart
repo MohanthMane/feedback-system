@@ -197,7 +197,15 @@ class _AnswerState extends State<Answer> {
         'scores': updated,
         'attended': attended,
       });
-    }).then((val) {
+    }).then((val) async {
+      await ref.get().then((doc) {
+        if (!(doc['attended'].contains(email))) {
+          print(email);
+          throw Exception('Error');
+        }
+      }).catchError((e) {
+        throw Exception('Error');
+      });
       pr.hide();
       Fluttertoast.showToast(msg: 'Feedback submitted succesfully');
       Navigator.of(context, rootNavigator: false).pop();
@@ -205,7 +213,7 @@ class _AnswerState extends State<Answer> {
     }).catchError((e) {
       pr.hide();
       print(e);
-      Fluttertoast.showToast(msg: 'Error submitting the feedback. Try again later');
+      uploadFeedback(context);
     });
   }
 }
